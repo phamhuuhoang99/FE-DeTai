@@ -1,29 +1,49 @@
 <template>
   <div class="layout">
     <Layout :style="{ minHeight: '100vh' }">
-      <Sider collapsible :collapsed-width="78" v-model="isCollapsed">
+      <Sider
+        width="450"
+        collapsible
+        :collapsed-width="78"
+        v-model="isCollapsed"
+        :style="{ background: '#fff' }"
+      >
         <Menu
           active-name="1-2"
-          theme="dark"
+          theme="light"
           width="auto"
           :class="menuitemClasses"
         >
+          <MenuItem name="1-2">
+            <Icon type="ios-pin" v-if="isCollapsed"></Icon>
+            <Button type="primary" icon="ios-pin" long v-if="!isCollapsed"
+              >Thêm Mới Nhiệm vụ</Button
+            >
+          </MenuItem>
           <MenuItem name="1-1">
-            <Icon type="ios-navigate"></Icon>
-            <span>Option 1</span>
+            <Icon type="ios-search" v-if="isCollapsed"></Icon>
+            <Input
+              suffix="ios-search"
+              placeholder="Nhập tên nhiệm vụ"
+              size="large"
+              v-if="!isCollapsed"
+            />
           </MenuItem>
         </Menu>
+        <Mission v-if="!isCollapsed" />
       </Sider>
       <Layout>
         <slot></slot>
       </Layout>
+      <SilderBarRight />
     </Layout>
   </div>
 </template>
 <script>
-// import SilderBar from "./SilderBar.vue";
+import SilderBarRight from "./SilderBarRight.vue";
+import Mission from "../Missions/Mission.vue";
 export default {
-  // components: { SilderBar },
+  components: { SilderBarRight, Mission },
   data() {
     return {
       isCollapsed: true,

@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <Layouts> <MapContainer /> </Layouts>
+    <Layouts>
+      <MapContainer />
+    </Layouts>
   </div>
 </template>
 

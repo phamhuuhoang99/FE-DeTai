@@ -1,13 +1,13 @@
 <template>
   <div class="list-mission">
-    <mission-item></mission-item>
+    <MissionItem></MissionItem>
   </div>
 </template>
 <script>
 import MissionItem from "./MissionItem.vue";
 
 export default {
-  component: { "mission-item": MissionItem },
+  components: { MissionItem },
 };
 </script>
 

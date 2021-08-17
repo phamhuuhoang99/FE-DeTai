@@ -1,18 +1,12 @@
 <template>
   <div id="app">
-    <Layouts>
-      <MapContainer />
-    </Layouts>
+    <router-view />
   </div>
 </template>
 
 <script>
-import Layouts from "./components/Layouts/Layouts.vue";
-import MapContainer from "./components/Map/MapContainer.vue";
-
 export default {
   name: "App",
-  components: { Layouts, MapContainer },
   data() {
     return {};
   },

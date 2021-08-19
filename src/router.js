@@ -20,7 +20,7 @@ const routes = [
         name: "dashboard",
       },
       {
-        path: "them-nguoi-dung",
+        path: "quan-li-nguoi-dung",
         component: CreateUser,
         name: "create-user",
       },

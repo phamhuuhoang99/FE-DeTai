@@ -1,29 +1,33 @@
 <template>
-  <Modal v-model="show" title="Thêm một User">
+  <Modal v-model="show" title="Sửa thông tin User">
     <Form
       ref="formValidate"
-      :model="user"
+      :model="userEdit"
       :rules="ruleValidate"
       :label-width="0"
     >
       <FormItem label="" prop="first_name">
-        <Input v-model="user.first_name" size="large" placeholder="Nhập Họ">
+        <Input v-model="userEdit.first_name" size="large" placeholder="Nhập Họ">
           <Icon type="ios-person" slot="prepend"></Icon
         ></Input>
       </FormItem>
       <FormItem label="" prop="last_name">
-        <Input v-model="user.last_name" size="large" placeholder="Nhập Tên">
+        <Input v-model="userEdit.last_name" size="large" placeholder="Nhập Tên">
           <Icon type="ios-person" slot="prepend"></Icon>
         </Input>
       </FormItem>
       <FormItem label="" prop="username">
-        <Input v-model="user.username" size="large" placeholder="Tên Tài Khoản">
+        <Input
+          v-model="userEdit.username"
+          size="large"
+          placeholder="Tên Tài Khoản"
+        >
           <Icon type="ios-person-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
       <FormItem label="" prop="password">
         <Input
-          v-model="user.password"
+          v-model="userEdit.password"
           password="password"
           type="password"
           size="large"
@@ -34,13 +38,17 @@
       </FormItem>
 
       <FormItem label="" prop="email">
-        <Input v-model="user.email" size="large" placeholder="Email">
+        <Input v-model="userEdit.email" size="large" placeholder="Email">
           <Icon type="ios-mail" slot="prepend" />
         </Input>
       </FormItem>
 
       <FormItem label="" prop="phone">
-        <Input v-model="user.phone" size="large" placeholder="Số điện thoại">
+        <Input
+          v-model="userEdit.phone"
+          size="large"
+          placeholder="Số điện thoại"
+        >
           <Icon type="md-call" slot="prepend" />
         </Input>
       </FormItem>
@@ -48,8 +56,8 @@
 
     <div slot="footer">
       <Button type="default" @click="hideModal('formValidate')">Hủy</Button>
-      <Button type="primary" @click="addUser('formValidate')">
-        Thêm User
+      <Button type="primary" @click="editUser('formValidate')">
+        Sửa User
       </Button>
     </div>
   </Modal>
@@ -57,22 +65,10 @@
 
 <script>
 export default {
-  props: ["onShow"],
+  props: ["onShow", "userEdit"],
   data() {
     return {
       show: this.onShow,
-      user: {
-        ...this.defaultUser,
-      },
-
-      defaultUser: {
-        first_name: "",
-        last_name: "",
-        username: "",
-        password: "",
-        email: "",
-        phone: "",
-      },
       ruleValidate: {
         first_name: [
           {
@@ -132,16 +128,17 @@ export default {
     };
   },
   methods: {
-    addUser(validate) {
+    editUser(validate) {
       this.$refs[validate].validate(async (valid) => {
         if (valid) {
-          const res = await this.callApi("post", "/users/create", this.user);
-          console.log(res);
+          const id = this.userEdit.id;
+
+          const res = await this.callApi("put", "/users/" + id, this.userEdit);
+
           if (res.status === 200) {
-            this.s("Thêm thành công");
+            this.s("Sửa thành công");
             this.show = false;
-            this.$emit("addUser", this.user);
-            this.user = { ...this.defaultUser };
+            this.$emit("editUser", this.userEdit);
           } else {
             if (res.status === 500) {
               // console.log(res.data.errors);
@@ -161,7 +158,7 @@ export default {
     },
     hideModal: function(name) {
       this.show = false;
-      this.user = { ...this.defaultUser };
+      this.userEdit = { ...this.defaultUser };
       this.$refs[name].resetFields();
     },
   },
@@ -170,7 +167,7 @@ export default {
       this.show = value;
     },
     show: function(value) {
-      this.$emit("clicked", value);
+      this.$emit("hideModalEdit", value);
     },
   },
 };

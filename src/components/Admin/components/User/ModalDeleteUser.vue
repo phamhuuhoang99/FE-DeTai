@@ -37,10 +37,11 @@ export default {
       const res = await this.callApi("delete", "/users/" + this.idUser);
       if (res.status === 200) {
         this.s("Deleted successfully");
+        this.$emit("deleteUser");
+        this.showModalDelete = false;
       } else {
         this.swr();
       }
-      this.$emit("deleteUser");
     },
   },
   watch: {

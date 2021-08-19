@@ -7,6 +7,7 @@ import DashBoard from "./components/Admin/components/Dashboard/Dashboard.vue";
 import ViewMap from "./components/ViewMap";
 import CreateUser from "./components/Admin/components/User/User.vue";
 import KieuThamHoa from "./components/Admin/components/ThamHoa/KieuThamHoa.vue";
+import Login from "./components/Login/Login.vue";
 
 const routes = [
   {
@@ -34,6 +35,11 @@ const routes = [
     path: "/",
     component: ViewMap,
     name: "user",
+  },
+  {
+    path: "/login",
+    component: Login,
+    name: "login",
   },
 ];
 

@@ -1,12 +1,12 @@
 <template>
   <Card :style="{ margin: '5px' }" :bordered="true">
-    <p slot="title"><Icon type="ios-book"></Icon> Bảo vệ chủ tịch nước</p>
+    <p slot="title"><Icon type="ios-book"></Icon> Cứu nạn vùng lũ</p>
     <div class="info-mission">
       <Row>
         <Col span="12">
-          <p>Đối tượng bảo vệ</p>
+          <p>Đối tượng cứu hộ</p>
         </Col>
-        <Col span="12">Chủ tịch nước</Col>
+        <Col span="12">Người dân</Col>
       </Row>
       <Row>
         <Col span="12">

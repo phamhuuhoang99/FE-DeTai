@@ -5,7 +5,10 @@ import ViewUI from "view-design";
 import router from "./router";
 import "view-design/dist/styles/iview.css";
 
+import common from "./common";
+
 Vue.use(ViewUI);
+Vue.mixin(common);
 
 Vue.config.productionTip = false;
 

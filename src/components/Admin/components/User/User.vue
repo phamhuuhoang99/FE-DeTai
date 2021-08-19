@@ -5,9 +5,9 @@
       Thêm</Button
     >
 
-    <Table style="margin-top: 15px" border :columns="columns" :data="data">
-      <template slot-scope="{ row }" slot="name">
-        <strong>{{ row.name }}</strong>
+    <Table style="margin-top: 15px" border :columns="columns" :data="users">
+      <template slot-scope="{ row }" slot="first_name">
+        <strong>{{ row.first_name }}</strong>
       </template>
       <template slot="action">
         <Button type="warning" style="margin-right: 5px" size="small"
@@ -16,7 +16,11 @@
         <Button type="error" size="small">Xóa</Button>
       </template>
     </Table>
-    <ModalAddUser @clicked="onChange" :onShow="modal1" />
+    <ModalAddUser
+      @addUser="addUserHandler"
+      @clicked="onChange"
+      :onShow="modal1"
+    />
   </div>
 </template>
 <script>
@@ -28,11 +32,11 @@ export default {
       columns: [
         {
           title: "Họ",
-          key: "lastname",
+          key: "last_name",
         },
         {
           title: "Tên",
-          slot: "name",
+          slot: "first_name",
         },
         {
           title: "Tên tài khoản",
@@ -53,28 +57,7 @@ export default {
           align: "center",
         },
       ],
-      data: [
-        {
-          name: "John Brown",
-          age: 18,
-          address: "New York No. 1 Lake Park",
-        },
-        {
-          name: "Jim Green",
-          age: 24,
-          address: "London No. 1 Lake Park",
-        },
-        {
-          name: "Joe Black",
-          age: 30,
-          address: "Sydney No. 1 Lake Park",
-        },
-        {
-          name: "Jon Snow",
-          age: 26,
-          address: "Ottawa No. 2 Lake Park",
-        },
-      ],
+      users: [],
       modal1: false,
     };
   },
@@ -86,6 +69,15 @@ export default {
       console.log("changed");
       this.modal1 = value;
     },
+    addUserHandler(user) {
+      this.users.unshift(user);
+    },
+  },
+  async created() {
+    const res = await this.callApi("get", "/users");
+    if (res.status === 200) {
+      this.users = res.data;
+    }
   },
 };
 </script>

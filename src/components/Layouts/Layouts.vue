@@ -8,28 +8,7 @@
         v-model="isCollapsed"
         :style="{ background: '#fff' }"
       >
-        <Menu
-          active-name="1-2"
-          theme="light"
-          width="auto"
-          :class="menuitemClasses"
-        >
-          <MenuItem name="1-2">
-            <Icon type="ios-pin" v-if="isCollapsed"></Icon>
-            <Button type="primary" icon="ios-pin" long v-if="!isCollapsed"
-              >Thêm Mới Nhiệm vụ</Button
-            >
-          </MenuItem>
-          <MenuItem name="1-1">
-            <Icon type="ios-search" v-if="isCollapsed"></Icon>
-            <Input
-              suffix="ios-search"
-              placeholder="Nhập tên nhiệm vụ"
-              size="large"
-              v-if="!isCollapsed"
-            />
-          </MenuItem>
-        </Menu>
+        <SilderBarLeft :closable="isCollapsed" />
         <Mission v-if="!isCollapsed" />
       </Sider>
       <Layout>
@@ -42,8 +21,9 @@
 <script>
 import SilderBarRight from "./SilderBarRight.vue";
 import Mission from "../Missions/Mission.vue";
+import SilderBarLeft from "./SilderBarLeft.vue";
 export default {
-  components: { SilderBarRight, Mission },
+  components: { SilderBarRight, Mission, SilderBarLeft },
   data() {
     return {
       isCollapsed: true,
@@ -61,6 +41,7 @@ export default {
   height: 100%;
   width: 100%;
 }
+
 .menu-item span {
   display: inline-block;
   overflow: hidden;

@@ -1,31 +1,31 @@
 <template>
-  <Sider collapsible :collapsed-width="78" v-model="isCollapsed">
-    <Menu active-name="1-2" theme="dark" width="auto" :class="menuitemClasses">
-      <MenuItem name="1-1">
-        <Icon type="ios-navigate"></Icon>
-        <span>Option 1</span>
-      </MenuItem>
-      <MenuItem name="1-2">
-        <Icon type="search"></Icon>
-        <span>Option 2</span>
-      </MenuItem>
-      <MenuItem name="1-3">
-        <Icon type="settings"></Icon>
-        <span>Option 3</span>
-      </MenuItem>
-    </Menu>
-  </Sider>
+  <Menu active-name="1-2" theme="light" width="auto" :class="menuitemClasses">
+    <MenuItem name="1-2">
+      <Icon type="ios-pin" v-if="closable"></Icon>
+      <Button type="primary" icon="ios-pin" long v-if="!closable"
+        >Thêm Mới Nhiệm vụ</Button
+      >
+    </MenuItem>
+    <MenuItem name="1-1">
+      <Icon type="ios-search" v-if="closable"></Icon>
+      <Input
+        suffix="ios-search"
+        placeholder="Nhập tên nhiệm vụ"
+        size="large"
+        v-if="!closable"
+      />
+    </MenuItem>
+  </Menu>
 </template>
 <script>
 export default {
+  props: ["closable", "collapsed-width"],
   data() {
-    return {
-      isCollapsed: false,
-    };
+    return {};
   },
   computed: {
     menuitemClasses: function() {
-      return ["menu-item", this.isCollapsed ? "collapsed-menu" : ""];
+      return ["menu-item", this.closable ? "collapsed-menu" : ""];
     },
   },
 };
@@ -55,9 +55,5 @@ export default {
   transition: font-size 0.2s ease 0.2s, transform 0.2s ease 0.2s;
   vertical-align: middle;
   font-size: 22px;
-}
-.layout-con {
-  height: 100%;
-  width: 100%;
 }
 </style>

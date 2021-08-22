@@ -8,9 +8,7 @@ import { mapActions } from "vuex";
 export default {
   name: "MapContainer",
   data() {
-    return {
-      listLayer: [],
-    };
+    return {};
   },
   created() {
     this.getAllTileLayers();

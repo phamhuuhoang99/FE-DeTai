@@ -2,8 +2,23 @@
   <Menu active-name="1-2" theme="light" width="auto" :class="menuitemClasses">
     <MenuItem name="1-2">
       <Icon type="ios-pin" v-if="closable"></Icon>
-      <Button type="primary" icon="ios-pin" long v-if="!closable"
+      <Button
+        type="primary"
+        icon="ios-pin"
+        long
+        v-if="!closable"
+        @click="addMisson"
+        v-show="!isAddLocation"
         >Thêm Mới Nhiệm vụ</Button
+      >
+      <Button
+        v-if="isAddLocation"
+        v-show="!closable"
+        type="primary"
+        long
+        :loading="!addingPoint"
+        @click="stopMisson"
+        >Tiếp tục</Button
       >
     </MenuItem>
     <MenuItem name="1-1">
@@ -15,17 +30,54 @@
         v-if="!closable"
       />
     </MenuItem>
+    <AddMission @onClose="closeHandler" :show="isAddMission" />
   </Menu>
 </template>
 <script>
+import { mapActions, mapGetters } from "vuex";
+import AddMission from "../Missions/AddMission";
+import GeoJSON from "ol/format/GeoJSON";
 export default {
-  props: ["closable", "collapsed-width"],
+  components: { AddMission },
+  props: ["closable"],
   data() {
-    return {};
+    return {
+      isAddLocation: false,
+      isAddMission: false,
+      adding: false,
+    };
   },
   computed: {
     menuitemClasses: function() {
       return ["menu-item", this.closable ? "collapsed-menu" : ""];
+    },
+    addingPoint: function() {
+      var geoJSONformat = new GeoJSON();
+      var featureGeojson = geoJSONformat.writeFeaturesObject(
+        this.$store.state.draw.source_.getFeatures()
+      );
+      return featureGeojson.features.length > 0;
+    },
+  },
+  mounted() {},
+  methods: {
+    ...mapActions(["startDraw", "stopDraw"]),
+    ...mapGetters(["map"]),
+    addMisson() {
+      this.startDraw("Point");
+      this.i("Thêm địa điểm xảy ra thảm họa");
+      this.isAddLocation = true;
+    },
+    stopMisson() {
+      this.stopDraw();
+      this.i("Thêm chi tiết nhiệm vụ");
+      this.isAddMission = true;
+    },
+    closeHandler(value) {
+      this.isAddMission = value;
+      this.isAddLocation = false;
+
+      // this.clearSourceDraw();
     },
   },
 };

@@ -14,16 +14,16 @@
       <Layout>
         <slot></slot>
       </Layout>
-      <SilderBarRight />
+      <!-- <SilderBarRight /> -->
     </Layout>
   </div>
 </template>
 <script>
-import SilderBarRight from "./SilderBarRight.vue";
+// import SilderBarRight from "./SilderBarRight.vue";
 import Mission from "../Missions/Mission.vue";
 import SilderBarLeft from "./SilderBarLeft.vue";
 export default {
-  components: { SilderBarRight, Mission, SilderBarLeft },
+  components: { Mission, SilderBarLeft },
   data() {
     return {
       isCollapsed: true,
@@ -36,6 +36,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .layout-con {
   height: 100%;

@@ -11,4 +11,7 @@ export default {
   setLayers(state, layers) {
     state.layers = [...layers];
   },
+  setDraw(state, draw) {
+    state.draw = draw;
+  },
 };

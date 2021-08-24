@@ -17,4 +17,7 @@ export default {
   setLayerMission(state, layerMission) {
     state.layerMission = layerMission;
   },
+  setOverlay(state, overlay) {
+    state.overlay = overlay;
+  },
 };

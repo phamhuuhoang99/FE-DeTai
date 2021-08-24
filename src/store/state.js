@@ -18,4 +18,5 @@ export default {
   }),
   view: new View(),
   draw: null,
+  overlay: null,
 };

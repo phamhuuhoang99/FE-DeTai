@@ -9,6 +9,7 @@ import Draw from "ol/interaction/Draw";
 import "ol/ol.css";
 import mapConfig from "../../src/mapConfig";
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
+// import { Fill, Style, Stroke } from "ol/style";
 import { FullScreen, defaults as defaultControls } from "ol/control";
 import ZoomSlider from "ol/control/ZoomSlider";
 // import GeoJSON from "ol/format/GeoJSON";
@@ -40,6 +41,7 @@ export default {
       }),
       ...context.state.layers,
     ]);
+    context.commit("setLayerMission", context.state.layers[2]);
 
     context.commit(
       "setView",
@@ -60,23 +62,24 @@ export default {
   },
   startDraw(context, type = "None") {
     const source = new VectorSource({ wrapX: false });
-    const vector = new VectorLayer({
-      source: source,
-      style: new Style({
+    const stylePointDraw = new Style({
+      fill: new Fill({
+        color: "#FF0000",
+      }),
+      stroke: new Stroke({
+        color: "#FF0000",
+        width: 2,
+      }),
+      image: new CircleStyle({
+        radius: 5,
         fill: new Fill({
           color: "#FF0000",
         }),
-        stroke: new Stroke({
-          color: "#FF0000",
-          width: 2,
-        }),
-        image: new CircleStyle({
-          radius: 7,
-          fill: new Fill({
-            color: "#FF0000",
-          }),
-        }),
       }),
+    });
+    const vector = new VectorLayer({
+      source: source,
+      style: stylePointDraw,
     });
 
     const map = context.state.map;
@@ -104,15 +107,9 @@ export default {
   },
   clearSourceDraw(context) {
     const draw = context.state.draw;
-
-    const source = draw.source_;
-    // var geoJSONformat = new GeoJSON();
-
-    // var featureGeojson = geoJSONformat.writeFeaturesObject(
-    //   source.getFeatures()
-    // );
-    // console.log(featureGeojson);
-
-    source.clear();
+    if (draw) {
+      const source = draw.source_;
+      source.clear();
+    }
   },
 };

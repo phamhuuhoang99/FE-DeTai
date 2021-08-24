@@ -1,19 +1,9 @@
 <template>
   <div>
-    <Modal
-      v-model="onShow"
-      ok-text="Lưu"
-      cancel-text="Hủy"
-      @on-cancel="onCancel"
-      @on-ok="onSave"
-      title="Chi tiết nhiệm vụ"
-    >
+    <Modal v-model="onShow" title="Chi tiết nhiệm vụ" @on-cancel="onCancel">
       <Form :model="mission" :label-width="80">
         <FormItem label="Tên">
-          <Input
-            v-model="mission.name"
-            placeholder="Nhập tên nhiệm vụ..."
-          ></Input>
+          <Input v-model="mission.name" placeholder="Nhập tên nhiệm vụ..." />
         </FormItem>
         <FormItem label="Thời gian">
           <Row>
@@ -45,6 +35,14 @@
           ></Input>
         </FormItem>
       </Form>
+      <div slot="footer">
+        <Button @click="onCancel()">
+          Hủy
+        </Button>
+        <Button type="primary" @click="onSave()">
+          Thêm Nhiệm vụ
+        </Button>
+      </div>
     </Modal>
   </div>
 </template>
@@ -55,16 +53,21 @@ import GeoJSON from "ol/format/GeoJSON";
 import { flash } from "../../animation/animation";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
+import { eventBus } from "../../main";
 export default {
   props: ["show"],
   data() {
     return {
       onShow: this.show,
       mission: {
+        ...this.defaultMission,
+      },
+      defaultMission: {
         name: "",
         start_date: null,
         end_date: null,
         description: "",
+        location: null,
       },
       options3: {
         disabledDate(date) {
@@ -73,38 +76,56 @@ export default {
       },
     };
   },
-  mounted() {},
   methods: {
     ...mapActions(["clearSourceDraw"]),
     ...mapMutations(["setView"]),
     ...mapGetters(["map", "layers"]),
     onCancel() {
+      this.onShow = false;
       this.clearSourceDraw();
     },
-    onSave() {
+    async onSave() {
       const source = this.$store.state.draw.source_;
       var geoJSONformat = new GeoJSON();
       var featureGeojson = geoJSONformat.writeFeaturesObject(
         source.getFeatures()
       );
-      var geojsonFeatureArray = featureGeojson.features;
-      const view = this.$store.state.view;
+      const geojsonFeatureArray = featureGeojson.features;
+      const geom = geojsonFeatureArray[0].geometry;
 
-      const center = geojsonFeatureArray[0].geometry.coordinates;
-      let geom = new Point(center);
-      let feature = new Feature(geom);
+      this.mission.location = geom;
+
+      const res = await this.callApi("post", "/missions/create", this.mission);
+      console.log(res);
+      if (res.status === 200) {
+        this.s("Thêm thành công");
+        this.onShow = false;
+        eventBus.$emit("addMission", res.data);
+        this.mission = { ...this.defaultMission };
+      } else {
+        if (res.status === 500) {
+          this.e(res.data.message);
+          return;
+        } else {
+          this.swr();
+        }
+      }
+
+      const view = this.$store.state.view;
+      const center = geom.coordinates;
       const layer = this.$store.state.layers[0];
       const map = this.$store.state.map;
-
       view.animate({
         zoom: 11,
         duration: 800,
         center: center,
       });
+
+      let point = new Point(center);
+      let feature = new Feature(point);
       window.setInterval(() => {
         flash(feature, layer, map);
       }, 1000);
-
       this.setView(view);
     },
   },

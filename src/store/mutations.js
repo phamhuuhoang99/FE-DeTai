@@ -14,4 +14,7 @@ export default {
   setDraw(state, draw) {
     state.draw = draw;
   },
+  setLayerMission(state, layerMission) {
+    state.layerMission = layerMission;
+  },
 };

@@ -47,6 +47,24 @@ export default {
         desc: desc,
       });
     },
+    clearInterval() {
+      const interval_id = window.setInterval(function() {},
+      Number.MAX_SAFE_INTEGER);
+
+      // Clear any timeout/interval up to that id
+      for (let i = 1; i < interval_id; i++) {
+        window.clearInterval(i);
+      }
+    },
+    updateLayer(layer, source) {
+      layer.setSource(source);
+      layer.changed();
+
+      var params = layer.getSource().getParams();
+      params.t = new Date().getMilliseconds();
+      layer.getSource().updateParams(params);
+    },
+
     // checkUserPermission(key) {
     //   if (!this.userPermission) return true;
     //   let isPermitted = false;

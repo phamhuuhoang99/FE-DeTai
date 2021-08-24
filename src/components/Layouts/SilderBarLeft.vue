@@ -1,34 +1,27 @@
 <template>
   <Menu active-name="1-2" theme="light" width="auto" :class="menuitemClasses">
     <MenuItem name="1-2">
-      <Icon type="ios-pin" v-if="closable"></Icon>
       <Button
         type="primary"
         icon="ios-pin"
         long
-        v-if="!closable"
         @click="addMisson"
-        v-show="!isAddLocation"
-        >Thêm Mới Nhiệm vụ</Button
+        v-if="!isAddLocation"
       >
+        Thêm Mới Nhiệm vụ
+      </Button>
       <Button
         v-if="isAddLocation"
-        v-show="!closable"
         type="primary"
         long
         :loading="!addingPoint"
         @click="stopMisson"
-        >Tiếp tục</Button
       >
+        Tiếp tục
+      </Button>
     </MenuItem>
     <MenuItem name="1-1">
-      <Icon type="ios-search" v-if="closable"></Icon>
-      <Input
-        suffix="ios-search"
-        placeholder="Nhập tên nhiệm vụ"
-        size="large"
-        v-if="!closable"
-      />
+      <Input suffix="ios-search" placeholder="Nhập tên nhiệm vụ" size="large" />
     </MenuItem>
     <AddMission @onClose="closeHandler" :show="isAddMission" />
   </Menu>
@@ -39,7 +32,6 @@ import AddMission from "../Missions/AddMission";
 import GeoJSON from "ol/format/GeoJSON";
 export default {
   components: { AddMission },
-  props: ["closable"],
   data() {
     return {
       isAddLocation: false,

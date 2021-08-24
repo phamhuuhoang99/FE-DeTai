@@ -1,15 +1,9 @@
 <template>
   <div class="layout">
     <Layout :style="{ minHeight: '100vh' }">
-      <Sider
-        width="450"
-        collapsible
-        :collapsed-width="78"
-        v-model="isCollapsed"
-        :style="{ background: '#fff' }"
-      >
-        <SilderBarLeft :closable="isCollapsed" />
-        <Mission v-if="!isCollapsed" />
+      <Sider width="400" :collapsed-width="78" :style="{ background: '#fff' }">
+        <SilderBarLeft />
+        <Mission />
       </Sider>
       <Layout>
         <slot></slot>
@@ -25,9 +19,7 @@ import SilderBarLeft from "./SilderBarLeft.vue";
 export default {
   components: { Mission, SilderBarLeft },
   data() {
-    return {
-      isCollapsed: true,
-    };
+    return {};
   },
   computed: {
     menuitemClasses: function() {

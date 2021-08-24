@@ -9,6 +9,8 @@ import common from "./common";
 import storeConfig from "./store/index";
 import "ol/ol.css";
 
+export const eventBus = new Vue();
+
 Vue.use(ViewUI);
 Vue.use(Vuex);
 Vue.mixin(common);

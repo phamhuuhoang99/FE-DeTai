@@ -1,30 +1,38 @@
 <template>
   <Card :style="{ margin: '5px' }" :bordered="true">
-    <p slot="title"><Icon type="ios-book"></Icon> Cứu nạn vùng lũ</p>
-    <div class="info-mission">
+    <div slot="title">
       <Row>
-        <Col span="12">
-          <p>Đối tượng cứu hộ</p>
+        <Col span="20">
+          <p><Icon type="ios-book"></Icon> {{ missionDetail.name }}</p>
         </Col>
-        <Col span="12">Người dân</Col>
+        <Col span="4">
+          <span @click="deleteMission(missionDetail)">
+            <Icon type="md-trash" size="20" color="red" />
+          </span>
+          <span style="margin-left:5px">
+            <Icon type="ios-create" size="20" color="#ff9900" />
+          </span>
+        </Col>
       </Row>
+    </div>
+    <div class="info-mission">
       <Row>
         <Col span="12">
           <p>Thời gian bắt đầu</p>
         </Col>
-        <Col span="12">Time</Col>
+        <Col span="12">{{ missionDetail.start_date }}</Col>
       </Row>
       <Row>
         <Col span="12">
           <p>Thời gian kết thúc</p>
         </Col>
-        <Col span="12">Time</Col>
+        <Col span="12">{{ missionDetail.end_date }}</Col>
       </Row>
       <Row>
         <Col span="12">
           <p>Mô tả</p>
         </Col>
-        <Col span="12">Bảo vệ chủ tịch nước</Col>
+        <Col span="12">{{ missionDetail.description }}</Col>
       </Row>
     </div>
 
@@ -37,3 +45,30 @@
     </Tabs>
   </Card>
 </template>
+<script>
+export default {
+  props: ["missionDetail", "showModal"],
+
+  data() {
+    return {
+      onShow: this.showModal,
+    };
+  },
+  methods: {
+    deleteMission: function(mission) {
+      this.onShow = false;
+      this.$emit("deleteModal", mission);
+    },
+  },
+  watch: {
+    // onShow: function(value) {
+    //   this.$emit("hideModal", value);
+    // },
+  },
+};
+</script>
+<style scoped>
+.i-icon {
+  margin-left: 5px;
+}
+</style>

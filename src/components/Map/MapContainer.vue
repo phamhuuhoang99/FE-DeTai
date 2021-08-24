@@ -18,7 +18,7 @@ export default {
   },
   computed: {},
   methods: {
-    ...mapActions(["getAllTileLayers", "initMap"]),
+    ...mapActions(["getAllTileLayers", "initMap", "getMissions"]),
   },
 };
 </script>

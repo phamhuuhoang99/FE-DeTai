@@ -8,6 +8,12 @@ export default {
         visible: true,
         zIndex: 0,
       },
+      {
+        layerName: "hoang:missions",
+        url: "",
+        visible: true,
+        zIndex: 0,
+      },
     ],
   },
 };

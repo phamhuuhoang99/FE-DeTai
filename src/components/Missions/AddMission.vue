@@ -85,6 +85,7 @@ export default {
       this.clearSourceDraw();
     },
     async onSave() {
+      this.$Loading.start();
       const source = this.$store.state.draw.source_;
       var geoJSONformat = new GeoJSON();
       var featureGeojson = geoJSONformat.writeFeaturesObject(
@@ -96,15 +97,16 @@ export default {
       this.mission.location = geom;
 
       const res = await this.callApi("post", "/missions/create", this.mission);
-      console.log(res);
       if (res.status === 200) {
         this.s("Thêm thành công");
         this.onShow = false;
         eventBus.$emit("addMission", res.data);
         this.mission = { ...this.defaultMission };
+        this.$Loading.finish();
       } else {
         if (res.status === 500) {
           this.e(res.data.message);
+          this.$Loading.error();
           return;
         } else {
           this.swr();

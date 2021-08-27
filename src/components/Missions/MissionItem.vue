@@ -36,34 +36,55 @@
       </Row>
     </div>
 
-    <Tabs>
-      <TabPane label="" size="large" icon="logo-buffer"></TabPane>
-      <TabPane label="" icon="md-people">标签二的内容</TabPane>
-      <TabPane label="" icon="md-create">标签三的内容</TabPane>
-      <TabPane label="" icon="ios-pricetags">标签三的内容</TabPane>
-      <TabPane label="" icon="ios-paper">标签三的内容</TabPane>
+    <Tabs type="card">
+      <TabPane label="Kế hoạch" size="large" icon="logo-buffer">
+        <Button @click="showAddPlan(missionDetail)" shape="circle" icon="md-add"
+          >Thêm kế hoạch</Button
+        >
+        <Table
+          highlight-row
+          style="margin-top:10px"
+          border
+          :columns="columns1"
+          :data="data1"
+        ></Table>
+      </TabPane>
+
+      <TabPane label="Đơn vị tham gia" icon="md-people"></TabPane>
+      <TabPane label="" icon="md-create"></TabPane>
+      <!-- <TabPane label="" icon="ios-pricetags">标签三的内容</TabPane>
+      <TabPane label="" icon="ios-paper">标签三的内容</TabPane> -->
     </Tabs>
   </Card>
 </template>
 <script>
+import { eventBus } from "../../main";
 export default {
-  props: ["missionDetail", "showModal"],
-
+  props: ["missionDetail", "showAddPlan"],
   data() {
     return {
-      onShow: this.showModal,
+      columns1: [
+        {
+          title: "Tên Kế Hoạch",
+          key: "name",
+        },
+        {
+          title: "Mô tả",
+          key: "description",
+        },
+      ],
+      data1: this.missionDetail.plans,
     };
+  },
+  mounted() {
+    eventBus.$on("addPlan", (plan) => {
+      this.data1.push(plan);
+    });
   },
   methods: {
     deleteMission: function(mission) {
-      this.onShow = false;
-      this.$emit("deleteModal", mission);
+      this.$emit("deleteModalMission", mission);
     },
-  },
-  watch: {
-    // onShow: function(value) {
-    //   this.$emit("hideModal", value);
-    // },
   },
 };
 </script>

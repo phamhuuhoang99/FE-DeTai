@@ -19,9 +19,15 @@
       </div>
     </Modal>
 
+    <AddPlan
+      :mission="missionAddPlan"
+      :onShow="showModalAddPlan"
+      :onHidden="hideModalPlan"
+    />
+
     <MissionItem
-      :showModal="showModalDelete"
-      @deleteModal="deleteModalHandler"
+      :showAddPlan="showModalPlan"
+      @deleteModalMission="deleteModalMissionHandler"
       :missionDetail="mission"
       v-for="mission in missions"
       :key="mission.id"
@@ -35,14 +41,16 @@ import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import { flash } from "../../animation/animation";
 import { mapActions, mapGetters } from "vuex";
-// import TileWMS from "ol/source/TileWMS";
+import AddPlan from "../Plan/ModalAddPlan.vue";
 export default {
-  components: { MissionItem },
+  components: { MissionItem, AddPlan },
   data() {
     return {
       missions: [],
       showModalDelete: false,
       missionDelete: null,
+      showModalAddPlan: false,
+      missionAddPlan: null,
     };
   },
   async created() {
@@ -73,14 +81,13 @@ export default {
   methods: {
     ...mapActions(["clearSourceDraw"]),
     ...mapGetters(["layerMission", "sourceMission"]),
-    showModalDeleteHandler() {
-      this.showModalDelete = true;
-    },
+    // showModalDeleteHandler() {
+    //   this.showModalDelete = true;
+    // },
     onCancel() {
       this.showModalDelete = false;
     },
-
-    deleteModalHandler(mission) {
+    deleteModalMissionHandler(mission) {
       this.missionDelete = mission;
       this.showModalDelete = true;
     },
@@ -124,6 +131,13 @@ export default {
         this.swr();
       }
     },
+    showModalPlan(mission) {
+      this.missionAddPlan = mission;
+      this.showModalAddPlan = true;
+    },
+    hideModalPlan() {
+      this.showModalAddPlan = false;
+    },
   },
 };
 </script>
@@ -133,7 +147,7 @@ export default {
   color: "#000";
   margin: "5px 10px";
   /* overflow: scroll; */
-  height: 760px;
+  height: 800px;
   overflow: auto;
 }
 </style>

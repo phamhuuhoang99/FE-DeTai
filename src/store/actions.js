@@ -174,9 +174,6 @@ export default {
         //   }
         // });
       }
-
-      // content.innerHTML =
-      //   "<p>You clicked here:</p><code>" + coordinate + "</code>";
     });
   },
   startDraw(context, type = "None") {

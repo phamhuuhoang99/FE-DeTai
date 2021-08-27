@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <Layout :style="{ minHeight: '100vh' }">
-      <Sider width="400" :collapsed-width="78" :style="{ background: '#fff' }">
+      <Sider width="450" :collapsed-width="78" :style="{ background: '#fff' }">
         <SilderBarLeft />
         <Mission />
       </Sider>

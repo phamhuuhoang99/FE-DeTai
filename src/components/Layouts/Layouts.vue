@@ -3,7 +3,11 @@
     <Layout :style="{ minHeight: '100vh' }">
       <Sider width="450" :collapsed-width="78" :style="{ background: '#fff' }">
         <SilderBarLeft />
-        <Mission />
+        <Button @click="showDetailPlan = !showDetailPlan">Test</Button>
+        <Divider />
+
+        <Mission v-if="!showDetailPlan" />
+        <DetailPlan v-else />
       </Sider>
       <Layout>
         <slot></slot>
@@ -16,10 +20,13 @@
 // import SilderBarRight from "./SilderBarRight.vue";
 import Mission from "../Missions/Mission.vue";
 import SilderBarLeft from "./SilderBarLeft.vue";
+import DetailPlan from "../Plan/DetailPlan.vue";
 export default {
-  components: { Mission, SilderBarLeft },
+  components: { Mission, SilderBarLeft, DetailPlan },
   data() {
-    return {};
+    return {
+      showDetailPlan: false,
+    };
   },
   computed: {
     menuitemClasses: function() {

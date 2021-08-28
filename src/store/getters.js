@@ -4,4 +4,6 @@ export default {
   layers: (state) => state.layers,
   layerMission: (state) => state.layerMission,
   sourceMission: (state) => state.sourceMission,
+  missions: (state) => state.missions,
+  draw: (state) => state.draw,
 };

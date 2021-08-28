@@ -56,6 +56,7 @@ export default {
   mounted() {
     this.initMap();
     this.initEventClickMap();
+    this.getMissions();
   },
   computed: {},
   methods: {

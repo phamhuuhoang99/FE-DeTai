@@ -9,11 +9,13 @@ import Draw from "ol/interaction/Draw";
 import "ol/ol.css";
 import mapConfig from "../../src/mapConfig";
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
-// import { Fill, Style, Stroke } from "ol/style";
 import { FullScreen, defaults as defaultControls } from "ol/control";
 import ZoomSlider from "ol/control/ZoomSlider";
-// import GeoJSON from "ol/format/GeoJSON";
 import Overlay from "ol/Overlay";
+import Point from "ol/geom/Point";
+import Feature from "ol/Feature";
+import { flash } from "../animation/animation";
+import axios from "axios";
 
 export default {
   getAllTileLayers(context) {
@@ -225,5 +227,32 @@ export default {
       const source = draw.source_;
       source.clear();
     }
+  },
+  async getMissions(context) {
+    try {
+      const prefixUrl = process.env.VUE_APP_ROOT_API;
+      const res = await axios.get(prefixUrl + "/missions");
+      context.commit("setMissions", res.data);
+      const layer = context.state.layers[1];
+      const map = context.state.map;
+
+      context.state.missions.forEach((mission) => {
+        let coordinates = mission.location.coordinates;
+        let point = new Point(coordinates);
+        let feature = new Feature(point);
+
+        window.setInterval(() => {
+          flash(feature, layer, map);
+        }, 1000);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  addMission(context, newMission) {
+    context.commit("ADD_MISSION", newMission);
+  },
+  deleteMission(context, missionId) {
+    context.commit("DELETE_MISSION", missionId);
   },
 };

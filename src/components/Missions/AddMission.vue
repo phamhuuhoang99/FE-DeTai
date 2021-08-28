@@ -53,7 +53,6 @@ import GeoJSON from "ol/format/GeoJSON";
 import { flash } from "../../animation/animation";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
-import { eventBus } from "../../main";
 export default {
   props: ["show"],
   data() {
@@ -76,17 +75,20 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapGetters(["map", "layers", "view", "draw"]),
+  },
   methods: {
-    ...mapActions(["clearSourceDraw"]),
+    ...mapActions(["clearSourceDraw", "addMission"]),
     ...mapMutations(["setView"]),
-    ...mapGetters(["map", "layers"]),
+
     onCancel() {
       this.onShow = false;
       this.clearSourceDraw();
     },
     async onSave() {
       this.$Loading.start();
-      const source = this.$store.state.draw.source_;
+      const source = this.draw.source_;
       var geoJSONformat = new GeoJSON();
       var featureGeojson = geoJSONformat.writeFeaturesObject(
         source.getFeatures()
@@ -100,7 +102,7 @@ export default {
       if (res.status === 200) {
         this.s("Thêm thành công");
         this.onShow = false;
-        eventBus.$emit("addMission", res.data);
+        this.addMission(res.data);
         this.mission = { ...this.defaultMission };
         this.$Loading.finish();
       } else {
@@ -113,11 +115,9 @@ export default {
         }
       }
 
-      const view = this.$store.state.view;
       const center = geom.coordinates;
-      const layer = this.$store.state.layers[0];
-      const map = this.$store.state.map;
-      view.animate({
+      const layer = this.layers[0];
+      this.view.animate({
         zoom: 11,
         duration: 800,
         center: center,
@@ -126,9 +126,9 @@ export default {
       let point = new Point(center);
       let feature = new Feature(point);
       window.setInterval(() => {
-        flash(feature, layer, map);
+        flash(feature, layer, this.map);
       }, 1000);
-      this.setView(view);
+      this.setView(this.view);
     },
   },
   watch: {

@@ -15,7 +15,9 @@
       </div>
       <div slot="footer">
         <Button type="default" size="large" @click="onCancel">Hủy</Button>
-        <Button type="error" size="large" @click="deleteMission()">Xóa</Button>
+        <Button type="error" size="large" @click="onDeleteMission()"
+          >Xóa</Button
+        >
       </div>
     </Modal>
 
@@ -36,7 +38,6 @@
 </template>
 <script>
 import MissionItem from "./MissionItem.vue";
-import { eventBus } from "../../main";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import { flash } from "../../animation/animation";
@@ -46,41 +47,19 @@ export default {
   components: { MissionItem, AddPlan },
   data() {
     return {
-      missions: [],
       showModalDelete: false,
       missionDelete: null,
       showModalAddPlan: false,
-      missionAddPlan: null,
+      missionAddPlan: Object,
     };
   },
-  async created() {
-    const res = await this.callApi("get", "/missions");
-    if (res.status === 200) {
-      this.missions = res.data;
-
-      const layer = this.$store.state.layers[1];
-      const map = this.$store.state.map;
-
-      this.missions.forEach((mission) => {
-        let coordinates = mission.location.coordinates;
-        let point = new Point(coordinates);
-        let feature = new Feature(point);
-
-        window.setInterval(() => {
-          flash(feature, layer, map);
-        }, 1000);
-      });
-    }
-
-    eventBus.$on("addMission", (mission) => {
-      this.missions.unshift(mission);
-    });
-  },
   mounted() {},
+  computed: {
+    ...mapGetters(["layerMission", "sourceMission", "missions"]),
+  },
 
   methods: {
-    ...mapActions(["clearSourceDraw"]),
-    ...mapGetters(["layerMission", "sourceMission"]),
+    ...mapActions(["clearSourceDraw", "deleteMission"]),
     // showModalDeleteHandler() {
     //   this.showModalDelete = true;
     // },
@@ -92,10 +71,10 @@ export default {
       this.showModalDelete = true;
     },
 
-    async deleteMission() {
-      const indexObjDelete = this.missions.findIndex((mission) => {
-        return mission.id == this.missionDelete.id;
-      });
+    async onDeleteMission() {
+      // const indexObjDelete = this.missions.findIndex((mission) => {
+      //   return mission.id == this.missionDelete.id;
+      // });
 
       const res = await this.callApi(
         "delete",
@@ -103,7 +82,8 @@ export default {
       );
       if (res.status === 200) {
         this.s("Xoá nhiệm vụ thành công");
-        this.missions.splice(indexObjDelete, 1);
+        // this.missions.splice(indexObjDelete, 1);
+        this.deleteMission(this.missionDelete.id);
         this.showModalDelete = false;
 
         this.clearInterval();
@@ -147,7 +127,7 @@ export default {
   color: "#000";
   margin: "5px 10px";
   /* overflow: scroll; */
-  height: 800px;
+  height: 720px;
   overflow: auto;
 }
 </style>

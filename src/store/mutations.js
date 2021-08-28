@@ -20,4 +20,15 @@ export default {
   setOverlay(state, overlay) {
     state.overlay = overlay;
   },
+  setMissions(state, missions) {
+    state.missions = [...missions];
+  },
+  ADD_MISSION(state, newMission) {
+    state.missions.unshift(newMission);
+  },
+  DELETE_MISSION(state, missionId) {
+    state.missions = state.missions.filter(
+      (mission) => mission.id !== missionId
+    );
+  },
 };

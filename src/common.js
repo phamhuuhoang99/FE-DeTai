@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const prefixUrl = "http://localhost:3000";
+const prefixUrl = process.env.VUE_APP_ROOT_API;
 export default {
   data() {
     return {};

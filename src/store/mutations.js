@@ -31,4 +31,7 @@ export default {
       (mission) => mission.id !== missionId
     );
   },
+  setIsDrawingScheme(state, isDrawingScheme) {
+    state.isDrawingScheme = isDrawingScheme;
+  },
 };

@@ -24,12 +24,14 @@
       <Input suffix="ios-search" placeholder="Nhập tên nhiệm vụ" size="large" />
     </MenuItem>
     <AddMission @onClose="closeHandler" :show="isAddMission" />
+    <Spin size="large" fix v-if="isAddingScheme"></Spin>
   </Menu>
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
 import AddMission from "../Missions/AddMission";
 import GeoJSON from "ol/format/GeoJSON";
+import { eventBus } from "../../main";
 export default {
   components: { AddMission },
   data() {
@@ -37,6 +39,7 @@ export default {
       isAddLocation: false,
       isAddMission: false,
       adding: false,
+      isAddingScheme: false,
     };
   },
   computed: {
@@ -71,6 +74,14 @@ export default {
 
       // this.clearSourceDraw();
     },
+  },
+  created() {
+    eventBus.$on("showControlDraw", (show) => {
+      this.isAddingScheme = show;
+    });
+    eventBus.$on("hideControlDraw", (show) => {
+      this.isAddingScheme = show;
+    });
   },
 };
 </script>

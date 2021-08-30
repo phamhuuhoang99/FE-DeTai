@@ -1,39 +1,6 @@
 <template>
   <div style="position: relative;">
-    <div class="control-plan">
-      <Tooltip content="Chọn màu" placement="top">
-        <Button
-          class="mg"
-          type="primary"
-          shape="circle"
-          icon="md-color-palette"
-        ></Button>
-      </Tooltip>
-      <Tooltip content="Vẽ mũi tên" placement="top">
-        <Button
-          class="mg"
-          type="success"
-          shape="circle"
-          icon="md-arrow-round-forward"
-        ></Button>
-      </Tooltip>
-      <Tooltip content="Vẽ điểm" placement="top">
-        <Button
-          class="mg"
-          type="success"
-          shape="circle"
-          icon="md-radio-button-on"
-        ></Button>
-      </Tooltip>
-      <Tooltip content="Vẽ đường" placement="top">
-        <Button class="mg" type="success" icon="md-remove" shape="circle">
-        </Button>
-      </Tooltip>
-
-      <Tooltip content="Vẽ đa giác" placement="top">
-        <Button type="success" icon="md-crop" shape="circle"> </Button>
-      </Tooltip>
-    </div>
+    <ControlDraw v-if="showControlDraw" />
     <div ref="map-root" id="map" style="width: 100%;height:100vh"></div>
     <div id="popup" class="ol-popup">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -44,14 +11,25 @@
 
 <script>
 import { mapActions } from "vuex";
+import { eventBus } from "../../main";
+import ControlDraw from "../ControlDraw/ControlDraw.vue";
 
 export default {
   name: "MapContainer",
+  components: { ControlDraw },
   data() {
-    return {};
+    return {
+      showControlDraw: false,
+    };
   },
   created() {
     this.getAllTileLayers();
+    eventBus.$on("showControlDraw", (show) => {
+      this.showControlDraw = show;
+    });
+    eventBus.$on("hideControlDraw", (show) => {
+      this.showControlDraw = show;
+    });
   },
   mounted() {
     this.initMap();
@@ -112,14 +90,5 @@ export default {
 }
 .ol-popup-closer:after {
   content: "✖";
-}
-.control-plan {
-  position: absolute;
-  top: 10px;
-  left: 50px;
-  z-index: 999;
-}
-.mg {
-  margin: 0 2px;
 }
 </style>

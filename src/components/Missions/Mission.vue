@@ -60,9 +60,6 @@ export default {
 
   methods: {
     ...mapActions(["clearSourceDraw", "deleteMission"]),
-    // showModalDeleteHandler() {
-    //   this.showModalDelete = true;
-    // },
     onCancel() {
       this.showModalDelete = false;
     },
@@ -72,10 +69,6 @@ export default {
     },
 
     async onDeleteMission() {
-      // const indexObjDelete = this.missions.findIndex((mission) => {
-      //   return mission.id == this.missionDelete.id;
-      // });
-
       const res = await this.callApi(
         "delete",
         "/missions/" + this.missionDelete.id
@@ -86,9 +79,12 @@ export default {
         this.deleteMission(this.missionDelete.id);
         this.showModalDelete = false;
 
+        this.clearSourceDraw();
+        this.updateLayer(this.layerMission, this.sourceMission);
+
         this.clearInterval();
 
-        //code ngu
+        // //code ngu
         const layer = this.$store.state.layers[1];
         const map = this.$store.state.map;
 
@@ -101,12 +97,7 @@ export default {
             flash(feature, layer, map);
           }, 1000);
         });
-        //code ngu
-        this.clearSourceDraw();
-        this.updateLayer(
-          this.$store.state.layerMission,
-          this.$store.state.sourceMission
-        );
+        // // code ngu
       } else {
         this.swr();
       }

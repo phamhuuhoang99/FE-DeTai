@@ -76,11 +76,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["map", "layers", "view", "draw"]),
+    ...mapGetters(["map", "layers", "view", "draw", "missions"]),
   },
   methods: {
     ...mapActions(["clearSourceDraw", "addMission"]),
-    ...mapMutations(["setView"]),
+    ...mapMutations(["setView", "setMissions"]),
 
     onCancel() {
       this.onShow = false;
@@ -102,7 +102,7 @@ export default {
       if (res.status === 200) {
         this.s("Thêm thành công");
         this.onShow = false;
-        this.addMission(res.data);
+        this.addMission({ ...res.data, plans: [] });
         this.mission = { ...this.defaultMission };
         this.$Loading.finish();
       } else {
@@ -118,7 +118,7 @@ export default {
       const center = geom.coordinates;
       const layer = this.layers[0];
       this.view.animate({
-        zoom: 11,
+        zoom: 14,
         duration: 800,
         center: center,
       });

@@ -2,18 +2,21 @@
   <Card :style="{ margin: '5px' }" :bordered="true">
     <div slot="title">
       <Row>
-        <Col span="20">
+        <Col span="18">
           <p style="color:#2db7f5">
             <Icon type="ios-book"></Icon>
             <strong>{{ missionDetail.name }}</strong>
           </p>
         </Col>
-        <Col span="4">
+        <Col span="6">
           <span @click="deleteMission(missionDetail)">
             <Icon type="md-trash" size="20" color="red" />
           </span>
           <span style="margin-left:5px">
             <Icon type="ios-create" size="20" color="#ff9900" />
+          </span>
+          <span style="margin-left:5px" @click="zoomToMission">
+            <Icon type="md-eye" size="20" color="#ff9900" />
           </span>
         </Col>
       </Row>
@@ -52,7 +55,7 @@
           :data="data1"
         >
           <template slot-scope="{ index }" slot="action">
-            <Tooltip content="Xóa Kế hoạch" placement="top">
+            <Tooltip content="Xóa Kế hoạch" placement="top-end">
               <Button
                 type="error"
                 shape="circle"
@@ -68,7 +71,17 @@
                 icon="ios-create"
                 type="warning"
                 size="small"
+                style="margin-right: 5px"
                 @click="remove(index)"
+              ></Button>
+            </Tooltip>
+            <Tooltip content="Xem chi tiết" placement="top-end">
+              <Button
+                shape="circle"
+                icon="ios-eye"
+                type="primary"
+                size="small"
+                @click="showDetail($event)"
               ></Button>
             </Tooltip>
           </template>
@@ -84,6 +97,7 @@
 </template>
 <script>
 import { eventBus } from "../../main";
+import { mapGetters } from "vuex";
 export default {
   props: ["missionDetail", "showAddPlan"],
   data() {
@@ -95,7 +109,7 @@ export default {
           align: "center",
         },
         {
-          title: "Tên Kế Hoạch",
+          title: "Kế Hoạch",
           key: "name",
         },
         {
@@ -108,19 +122,12 @@ export default {
         {
           title: "Action",
           slot: "action",
-          width: 90,
+          width: 120,
           align: "center",
         },
       ],
       data1: this.missionDetail.plans,
     };
-  },
-  created() {
-    eventBus.$on("addPlan", (plan) => {
-      if (plan.missionId === this.missionDetail.id) {
-        this.data1.push(plan);
-      }
-    });
   },
   methods: {
     deleteMission: function(mission) {
@@ -132,6 +139,21 @@ export default {
     remove(index) {
       console.log(index);
     },
+    showDetail(dataRow) {
+      console.log(dataRow);
+      eventBus.$emit("detailPlanOfMission", dataRow);
+    },
+    zoomToMission() {
+      const coordinates = this.missionDetail.location.coordinates;
+      this.view.animate({
+        zoom: 13,
+        duration: 800,
+        center: coordinates,
+      });
+    },
+  },
+  computed: {
+    ...mapGetters(["view"]),
   },
 };
 </script>

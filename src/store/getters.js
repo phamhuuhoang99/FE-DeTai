@@ -6,4 +6,5 @@ export default {
   sourceMission: (state) => state.sourceMission,
   missions: (state) => state.missions,
   draw: (state) => state.draw,
+  isDrawingScheme: (state) => state.isDrawingScheme,
 };

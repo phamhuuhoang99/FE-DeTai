@@ -8,7 +8,7 @@ import { Vector as VectorLayer } from "ol/layer";
 import Draw from "ol/interaction/Draw";
 import "ol/ol.css";
 import mapConfig from "../../src/mapConfig";
-import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
+import { Circle as CircleStyle, Fill, Stroke, Style, Icon } from "ol/style";
 import { FullScreen, defaults as defaultControls } from "ol/control";
 import ZoomSlider from "ol/control/ZoomSlider";
 import Overlay from "ol/Overlay";
@@ -49,7 +49,7 @@ export default {
     context.commit(
       "setView",
       new View({
-        zoom: 7.5,
+        zoom: 10,
         center: [11781474.417420888, 2415619.3084370033],
         constrainResolution: true,
       })
@@ -180,24 +180,63 @@ export default {
   },
   startDraw(context, type = "None") {
     const source = new VectorSource({ wrapX: false });
-    const stylePointDraw = new Style({
-      fill: new Fill({
-        color: "#FF0000",
-      }),
-      stroke: new Stroke({
-        color: "#FF0000",
-        width: 2,
-      }),
-      image: new CircleStyle({
-        radius: 5,
+    let style;
+
+    if (type === "Point") {
+      style = new Style({
         fill: new Fill({
           color: "#FF0000",
         }),
-      }),
-    });
+        stroke: new Stroke({
+          color: "#FF0000",
+          width: 2,
+        }),
+        image: new CircleStyle({
+          radius: 5,
+          fill: new Fill({
+            color: "#FF0000",
+          }),
+        }),
+      });
+    }
+    if (type === "Arrow") {
+      style = function(feature) {
+        const geometry = feature.getGeometry();
+        const styles = [
+          new Style({
+            stroke: new Stroke({
+              color: "#FF0000",
+              width: 2,
+            }),
+          }),
+        ];
+
+        geometry.forEachSegment(function(start, end) {
+          const dx = end[0] - start[0];
+          const dy = end[1] - start[1];
+          const rotation = Math.atan2(dy, dx);
+          // arrows
+          styles.push(
+            new Style({
+              geometry: new Point(end),
+              image: new Icon({
+                src: "./images/arrow.png",
+                anchor: [0.75, 0.5],
+                rotateWithView: true,
+                rotation: -rotation,
+                scale: 1.25,
+                color: "#FF0000",
+              }),
+            })
+          );
+        });
+        return styles;
+      };
+    }
+
     const vector = new VectorLayer({
       source: source,
-      style: stylePointDraw,
+      style: style,
     });
 
     const map = context.state.map;
@@ -207,6 +246,7 @@ export default {
     let draw; // global so we can remove it later
 
     if (type !== "None") {
+      if (type === "Arrow") type = "LineString";
       draw = new Draw({
         source: source,
         type: type,
@@ -214,6 +254,15 @@ export default {
       context.commit("setDraw", draw);
       map.addInteraction(draw);
     }
+
+    draw.on("drawend", () => {
+      setTimeout(function() {
+        context.state.isDrawingScheme = true;
+        const map = context.state.map;
+        const draw = context.state.draw;
+        map.removeInteraction(draw);
+      }, 500);
+    });
   },
   stopDraw(context) {
     const map = context.state.map;

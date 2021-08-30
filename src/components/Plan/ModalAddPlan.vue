@@ -35,7 +35,8 @@
   </Modal>
 </template>
 <script>
-import { eventBus } from "../../main";
+// import { eventBus } from "../../main";
+import { mapGetters, mapMutations } from "vuex";
 export default {
   props: ["onShow", "onHidden", "mission"],
   data() {
@@ -60,6 +61,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["setMissions"]),
     savePlan(name) {
       this.$refs[name].validate(async (valid) => {
         if (valid) {
@@ -70,7 +72,19 @@ export default {
           if (res.status === 200) {
             this.s("Thêm thành công");
             this.onHidden();
-            eventBus.$emit("addPlan", res.data);
+
+            // eventBus.$emit("addPlan", res.data);
+
+            let index = this.missions.findIndex((mission) => {
+              return mission.id === this.mission.id;
+            });
+
+            // code do
+            this.missions[index].plans.push(res.data);
+
+            this.setMissions(this.missions);
+            // code do
+
             this.plan = { ...this.defaultPlan };
           } else {
             if (res.status === 500) {
@@ -88,6 +102,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(["missions"]),
     show: function() {
       return this.onShow;
     },

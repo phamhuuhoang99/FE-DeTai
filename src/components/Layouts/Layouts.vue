@@ -2,12 +2,10 @@
   <div class="layout">
     <Layout :style="{ minHeight: '100vh' }">
       <Sider width="450" :collapsed-width="78" :style="{ background: '#fff' }">
-        <SilderBarLeft />
-        <Button @click="showDetailPlan = !showDetailPlan">Test</Button>
+        <SilderBarLeft> </SilderBarLeft>
         <Divider />
-
         <Mission v-if="!showDetailPlan" />
-        <DetailPlan v-else />
+        <DetailPlan @showMission="showListMission" v-else :data="plan" />
       </Sider>
       <Layout>
         <slot></slot>
@@ -21,16 +19,31 @@
 import Mission from "../Missions/Mission.vue";
 import SilderBarLeft from "./SilderBarLeft.vue";
 import DetailPlan from "../Plan/DetailPlan.vue";
+import { eventBus } from "../../main";
 export default {
   components: { Mission, SilderBarLeft, DetailPlan },
   data() {
     return {
       showDetailPlan: false,
+      plan: Object,
     };
+  },
+  created() {
+    eventBus.$on("detailPlanOfMission", (plan) => {
+      if (plan) {
+        this.showDetailPlan = true;
+        this.plan = plan;
+      }
+    });
   },
   computed: {
     menuitemClasses: function() {
       return ["menu-item", this.isCollapsed ? "collapsed-menu" : ""];
+    },
+  },
+  methods: {
+    showListMission() {
+      this.showDetailPlan = false;
     },
   },
 };

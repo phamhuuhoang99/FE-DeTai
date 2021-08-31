@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 import ViewUI from "view-design";
+import locale from "view-design/dist/locale/en-US";
 import Vuex from "vuex";
 import router from "./router";
 import "view-design/dist/styles/iview.css";
@@ -12,7 +13,7 @@ import "ol/ol.css";
 export const eventBus = new Vue();
 
 Vue.use(Fragment.Plugin);
-Vue.use(ViewUI);
+Vue.use(ViewUI, { locale: locale });
 Vue.use(Vuex);
 Vue.mixin(common);
 

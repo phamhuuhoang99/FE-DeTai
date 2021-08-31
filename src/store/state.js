@@ -21,4 +21,5 @@ export default {
   overlay: null,
   isDrawingScheme: false,
   missions: [],
+  planSeeDetail: Object,
 };

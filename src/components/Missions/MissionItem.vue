@@ -16,7 +16,7 @@
             <Icon type="ios-create" size="20" color="#ff9900" />
           </span>
           <span style="margin-left:5px" @click="zoomToMission">
-            <Icon type="md-eye" size="20" color="#ff9900" />
+            <Icon type="md-eye" size="20" color="#2d8cf0" />
           </span>
         </Col>
       </Row>
@@ -81,7 +81,7 @@
                 icon="ios-eye"
                 type="primary"
                 size="small"
-                @click="showDetail($event)"
+                @click="showDetail(index)"
               ></Button>
             </Tooltip>
           </template>
@@ -139,9 +139,8 @@ export default {
     remove(index) {
       console.log(index);
     },
-    showDetail(dataRow) {
-      console.log(dataRow);
-      eventBus.$emit("detailPlanOfMission", dataRow);
+    showDetail(index) {
+      eventBus.$emit("detailPlanOfMission", this.data1[index]);
     },
     zoomToMission() {
       const coordinates = this.missionDetail.location.coordinates;

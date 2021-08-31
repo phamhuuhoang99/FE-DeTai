@@ -7,4 +7,5 @@ export default {
   missions: (state) => state.missions,
   draw: (state) => state.draw,
   isDrawingScheme: (state) => state.isDrawingScheme,
+  // planSeeDetail: (state) => state.planSeeDetail,
 };

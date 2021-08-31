@@ -50,13 +50,14 @@
       :data="data1"
     ></Table>
 
-    <ModalAddScheme />
+    <ModalAddScheme :planId="data.id" />
   </div>
 </template>
 
 <script>
 import { eventBus } from "../../main";
 import ModalAddScheme from "../Scheme/ModalAddScheme";
+import { mapMutations } from "vuex";
 export default {
   props: ["data"],
   components: { ModalAddScheme },
@@ -89,8 +90,10 @@ export default {
     eventBus.$on("hideControlDraw", (show) => {
       this.isAddingScheme = show;
     });
+    this.setIsDrawingScheme(false);
   },
   methods: {
+    ...mapMutations(["setIsDrawingScheme"]),
     backToMission() {
       this.$emit("showMission", true);
     },

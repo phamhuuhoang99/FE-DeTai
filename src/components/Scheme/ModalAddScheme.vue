@@ -20,7 +20,7 @@
         >
         </Input>
       </FormItem>
-      <FormItem label="Tên đơn vị">
+      <!-- <FormItem label="Tên đơn vị">
         <Select v-model="model12" filterable multiple>
           <Option
             v-for="item in cityList"
@@ -29,11 +29,13 @@
             >{{ item.label }}</Option
           >
         </Select>
-      </FormItem>
+      </FormItem> -->
       <FormItem label="Thời gian xuất phát">
         <DatePicker
+          clear-text="Chọn"
+          v-model="scheme.time_start"
           type="datetime"
-          placeholder="Select date and time"
+          placeholder="Thời gian xuất phát"
           style="width: 200px"
         ></DatePicker>
       </FormItem>
@@ -51,7 +53,7 @@
       <Button @click="cancel">
         Hủy
       </Button>
-      <Button type="primary">
+      <Button type="primary" @click="save">
         Thêm phương án
       </Button>
     </div>
@@ -60,14 +62,17 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
+import GeoJSON from "ol/format/GeoJSON";
 export default {
+  props: ["planId"],
   data() {
     return {
       scheme: {
         name: "",
         idDonVi: null,
-        timeStart: null,
+        time_start: null,
         note: "",
+        geom: null,
         validate: {},
       },
       cityList: [
@@ -81,7 +86,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isDrawingScheme"]),
+    ...mapGetters(["isDrawingScheme", "draw"]),
   },
   methods: {
     ...mapMutations(["setIsDrawingScheme"]),
@@ -89,6 +94,18 @@ export default {
     cancel() {
       this.setIsDrawingScheme(false);
       this.clearSourceDraw();
+    },
+    save() {
+      const source = this.draw.source_;
+      var geoJSONformat = new GeoJSON();
+      var featureGeojson = geoJSONformat.writeFeaturesObject(
+        source.getFeatures()
+      );
+      const geojsonFeatureArray = featureGeojson.features;
+      const geom = geojsonFeatureArray[0].geometry;
+      this.scheme.geom = geom;
+
+      console.log(this.planId);
     },
   },
 };

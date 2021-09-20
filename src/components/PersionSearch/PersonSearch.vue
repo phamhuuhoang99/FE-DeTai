@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <Button @click="showModal" shape="circle" icon="md-add"
+    <Button @click="onShowModalAdd" shape="circle" icon="md-add"
       >Thêm đối tượng</Button
     >
     <Table
@@ -17,36 +17,36 @@
           icon="ios-trash"
           size="small"
           style="margin-right: 5px"
+          @click="onShowModalDelete"
         ></Button>
 
-        <Tooltip content="Sửa Đối tượng" placement="top-end">
-          <Button
-            shape="circle"
-            icon="ios-create"
-            type="warning"
-            size="small"
-            style="margin-right: 5px"
-          ></Button>
-        </Tooltip>
-        <Tooltip content="Xem chi tiết" placement="top-end">
-          <Button
-            shape="circle"
-            icon="ios-eye"
-            type="primary"
-            size="small"
-          ></Button>
-        </Tooltip>
+        <Button
+          shape="circle"
+          icon="ios-create"
+          type="warning"
+          size="small"
+          style="margin-right: 5px"
+        ></Button>
+
+        <Button
+          shape="circle"
+          icon="ios-eye"
+          type="primary"
+          size="small"
+        ></Button>
       </template>
     </Table>
 
-    <ModalAddPerson :show="showModalAdd" :hide="hideModal" />
+    <ModalAddPerson :show="showModalAdd" :hide="hideModalAdd" />
+    <ModalDeletePerson :show="showModalDelete" :hide="hideModalDelete" />
   </fragment>
 </template>
 
 <script>
 import ModalAddPerson from "./ModalAddPerson.vue";
+import ModalDeletePerson from "./ModalDeletePerson.vue";
 export default {
-  components: { ModalAddPerson },
+  components: { ModalAddPerson, ModalDeletePerson },
   data() {
     return {
       columns: [
@@ -95,6 +95,7 @@ export default {
         },
       ],
       showModalAdd: false,
+      showModalDelete: false,
       data: [
         {
           name: "Huu Hoang",
@@ -103,11 +104,18 @@ export default {
     };
   },
   methods: {
-    showModal() {
+    onShowModalAdd() {
       this.showModalAdd = true;
     },
-    hideModal() {
+    hideModalAdd() {
       this.showModalAdd = false;
+    },
+    onShowModalDelete() {
+      this.showModalDelete = true;
+    },
+
+    hideModalDelete() {
+      this.showModalDelete = false;
     },
   },
 };

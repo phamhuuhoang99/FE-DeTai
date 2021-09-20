@@ -92,8 +92,6 @@
         <PersonSearch />
       </TabPane>
       <TabPane label="CSVC Bảo vệ" icon="md-settings"></TabPane>
-      <!-- <TabPane label="" icon="ios-pricetags">标签三的内容</TabPane>
-      <TabPane label="" icon="ios-paper">标签三的内容</TabPane> -->
     </Tabs>
   </Card>
 </template>

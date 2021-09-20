@@ -118,8 +118,8 @@ export default {
       const center = geom.coordinates;
       const layer = this.layers[0];
       this.view.animate({
-        zoom: 14,
-        duration: 800,
+        zoom: 16,
+        duration: 900,
         center: center,
       });
 

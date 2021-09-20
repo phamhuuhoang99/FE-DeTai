@@ -13,9 +13,14 @@ import { FullScreen, defaults as defaultControls } from "ol/control";
 import ZoomSlider from "ol/control/ZoomSlider";
 import Overlay from "ol/Overlay";
 import Point from "ol/geom/Point";
+// import Polyline from "ol/format/Polyline";
+import LineString from "ol/geom/LineString";
 import Feature from "ol/Feature";
 import { flash } from "../animation/animation";
+import { getVectorContext } from "ol/render";
 import axios from "axios";
+import * as turf from "@turf/turf";
+// import { transform } from "ol/proj";
 
 export default {
   getAllTileLayers(context) {
@@ -91,7 +96,8 @@ export default {
       const coordinate = evt.coordinate;
       const resolution = context.state.map.getView().getResolution();
       const projection = context.state.map.getView().getProjection();
-      const url = context.state.sourceMission.getFeatureInfoUrl(
+      let url;
+      url = context.state.sourceMission.getFeatureInfoUrl(
         coordinate,
         resolution,
         projection,
@@ -114,71 +120,32 @@ export default {
                 data.features[0].properties.end_date +
                 "<br> <b>Mô tả</b>:" +
                 data.features[0].properties.description;
-              // if (data.features[0].geometry.type == "Polygon") {
-              //   popup.show(data.features[0].geometry.coordinates[0][0], content);
-              // } else if (data.features[0].geometry.type == "Point") {
-              //   popup.show(data.features[0].geometry.coordinates, content);
-              // } else {
-              //   popup.show(data.features[0].geometry.coordinates[0], content);
-              // }
               context.state.overlay.setPosition(coordinate);
             } catch (err) {
               return;
             }
           });
-
-        //pop-up style point
-        // $.getJSON(url, function(data) {
-        //   // console.log(data.getKeys());
-        //   // console.log(data);
-        //   if (data.features.length == 0) return;
-
-        //   let gid = Number(data.features[0].id.split(".")[1]);
-
-        //   if (typeStyle === "Style Point") {
-        //     document
-        //       .getElementById("saveStylePoint")
-        //       .setAttribute("onclick", "changePoint(" + gid + ")");
-        //     $("#modal-style").modal("show");
-        //   } else if (typeStyle === "Style Line") {
-        //     document
-        //       .getElementById("saveStyleLine")
-        //       .setAttribute("onclick", "changeLine(" + gid + ")");
-        //     $("#modal-style-line").modal("show");
-        //   } else if (typeStyle === "Style Polygon") {
-        //     document
-        //       .getElementById("saveStylePolygon")
-        //       .setAttribute("onclick", "changePolygon(" + gid + ")");
-        //     $("#modal-style-polygon").modal("show");
-        //   } else if (typeStyle === "Style Symbol") {
-        //     document
-        //       .getElementById("saveStyleSymbol")
-        //       .setAttribute("onclick", "changeSymbol(" + gid + ")");
-        //     $("#modal-style-symbol").modal("show");
-        //   }
-
-        //   try {
-        //     content =
-        //       "<b>TYPE</b> : " +
-        //       data.features[0].properties.type +
-        //       "<br> <b>NAME </b> :" +
-        //       data.features[0].properties.name;
-
-        //     if (data.features[0].geometry.type == "Polygon") {
-        //       popup.show(data.features[0].geometry.coordinates[0][0], content);
-        //     } else if (data.features[0].geometry.type == "Point") {
-        //       popup.show(data.features[0].geometry.coordinates, content);
-        //     } else {
-        //       popup.show(data.features[0].geometry.coordinates[0], content);
-        //     }
-        //   } catch (err) {
-        //     return;
-        //   }
-        // });
       }
     });
   },
   startDraw(context, type = "None") {
+    const geometryFunction = function(coordinates, geometry) {
+      if (!geometry) {
+        geometry = new LineString([], "XY");
+      }
+
+      var line = {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: coordinates,
+        },
+      };
+      var curved = turf.bezier(line);
+      geometry.setCoordinates(curved["geometry"]["coordinates"]);
+      return geometry;
+    };
     const source = new VectorSource({ wrapX: false });
     let style;
 
@@ -200,23 +167,36 @@ export default {
       });
     }
     if (type === "Arrow") {
+      const color = context.state.colorDraw;
       style = function(feature) {
         const geometry = feature.getGeometry();
-        const styles = [
+        let styles = [
           new Style({
             stroke: new Stroke({
-              color: "#FF0000",
+              color: color,
               width: 2,
             }),
           }),
         ];
-
-        geometry.forEachSegment(function(start, end) {
+        geometry.forEachSegment((start, end) => {
           const dx = end[0] - start[0];
           const dy = end[1] - start[1];
           const rotation = Math.atan2(dy, dx);
           // arrows
-          styles.push(
+          // styles.push(
+          //   new Style({
+          //     geometry: new Point(end),
+          //     image: new Icon({
+          //       src: "./images/arrow.png",
+          //       anchor: [0.75, 0.5],
+          //       rotateWithView: true,
+          //       rotation: -rotation,
+          //       scale: 1.25,
+          //       color: color,
+          //     }),
+          //   })
+          // );
+          styles = new Array(
             new Style({
               geometry: new Point(end),
               image: new Icon({
@@ -225,11 +205,19 @@ export default {
                 rotateWithView: true,
                 rotation: -rotation,
                 scale: 1.25,
-                color: "#FF0000",
+                color: color,
               }),
             })
           );
         });
+        styles.push(
+          new Style({
+            stroke: new Stroke({
+              color: color,
+              width: 2,
+            }),
+          })
+        );
         return styles;
       };
     }
@@ -246,11 +234,20 @@ export default {
     let draw; // global so we can remove it later
 
     if (type !== "None") {
-      if (type === "Arrow") type = "LineString";
-      draw = new Draw({
-        source: source,
-        type: type,
-      });
+      if (type === "Arrow") {
+        type = "LineString";
+        draw = new Draw({
+          source: source,
+          type: type,
+          geometryFunction: geometryFunction,
+        });
+      } else {
+        draw = new Draw({
+          source: source,
+          type: type,
+        });
+      }
+
       context.commit("setDraw", draw);
       map.addInteraction(draw);
     }
@@ -303,5 +300,126 @@ export default {
   },
   deleteMission(context, missionId) {
     context.commit("DELETE_MISSION", missionId);
+  },
+  startSimulation(context, polyline) {
+    var route = new LineString(polyline.coordinates).transform(
+      "EPSG:4326",
+      "EPSG:4326"
+    );
+
+    const routeFeature = new Feature({
+      type: "route",
+      geometry: route,
+    });
+    const startMarker = new Feature({
+      type: "icon",
+      geometry: new Point(route.getFirstCoordinate()),
+    });
+    const endMarker = new Feature({
+      type: "icon",
+      geometry: new Point(route.getLastCoordinate()),
+    });
+    const position = startMarker.getGeometry().clone();
+    const geoMarker = new Feature({
+      type: "geoMarker",
+      geometry: position,
+    });
+    const styles = {
+      route: new Style({
+        stroke: new Stroke({
+          width: 6,
+          color: [255, 0, 0, 0.3],
+        }),
+      }),
+      icon: new Style({
+        image: new Icon({
+          anchor: [0.5, 1],
+          src: "https://openlayers.org/en/latest/examples/data/icon.png",
+        }),
+      }),
+      geoMarker: new Style({
+        image: new CircleStyle({
+          radius: 7,
+          fill: new Fill({ color: "black" }),
+          stroke: new Stroke({
+            color: "white",
+            width: 2,
+          }),
+        }),
+      }),
+    };
+    const vectorLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [routeFeature, geoMarker, startMarker, endMarker],
+      }),
+      style: function(feature) {
+        return styles[feature.get("type")];
+      },
+    });
+
+    context.state.map.addLayer(vectorLayer);
+
+    const speedInput = 20;
+    // const startButton = document.getElementById("start-animation");
+    // let animating = false;
+    let distance = 0;
+    let lastTime;
+
+    function moveFeature(event) {
+      const speed = Number(speedInput);
+      const time = event.frameState.time;
+      const elapsedTime = time - lastTime;
+      distance = (distance + (speed * elapsedTime) / 1e6) % 2;
+      lastTime = time;
+
+      const currentCoordinate = route.getCoordinateAt(
+        distance > 1 ? 2 - distance : distance
+      );
+      position.setCoordinates(currentCoordinate);
+      const vectorContext = getVectorContext(event);
+      vectorContext.setStyle(styles.geoMarker);
+      vectorContext.drawGeometry(position);
+      // tell OpenLayers to continue the postrender animation
+      context.state.map.render();
+    }
+
+    function startAnimation() {
+      // animating = true;
+      lastTime = Date.now();
+      // startButton.textContent = "Stop Animation";
+      vectorLayer.on("postrender", moveFeature);
+      // hide geoMarker and trigger map render through change event
+      geoMarker.setGeometry(null);
+    }
+
+    startAnimation();
+
+    // console.log(polyline);
+    // let locations = polyline.coordinates;
+    // locations.map(function(l) {
+    //   return l.reverse();
+    // });
+
+    // console.log(polyline.coordinates);
+    // const route = new LineString(locations).transform("EPSG:4326", "EPSG:3857");
+    // var routeCoords = route.getCoordinates();
+    // var routeLength = routeCoords.length;
+
+    // function stopAnimation() {
+    //   animating = false;
+    //   // startButton.textContent = "Start Animation";
+
+    //   // Keep marker at current animation position
+    //   geoMarker.setGeometry(position);
+    //   vectorLayer.un("postrender", moveFeature);
+    // }
+
+    // startButton.addEventListener("click", function() {
+    //   if (animating) {
+    //     stopAnimation();
+    //   } else {
+    //     startAnimation();
+    //   }
+    // });
   },
 };

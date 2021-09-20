@@ -8,4 +8,6 @@ export default {
   draw: (state) => state.draw,
   isDrawingScheme: (state) => state.isDrawingScheme,
   // planSeeDetail: (state) => state.planSeeDetail,
+  colorDraw: (state) => state.colorDraw,
+  overlay: (state) => state.overlay,
 };

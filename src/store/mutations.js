@@ -34,7 +34,10 @@ export default {
   setIsDrawingScheme(state, isDrawingScheme) {
     state.isDrawingScheme = isDrawingScheme;
   },
-  setPlanSeeDetail(state, plan) {
-    state.planSeeDetail = plan;
+  setColorDraw(state, colorDraw) {
+    state.colorDraw = colorDraw;
   },
+  // setPlanSeeDetail(state, plan) {
+  //   state.planSeeDetail = plan;
+  // },
 };

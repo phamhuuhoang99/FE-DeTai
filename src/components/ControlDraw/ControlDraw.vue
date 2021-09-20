@@ -1,12 +1,13 @@
 <template>
   <div class="control-plan">
     <Tooltip content="Chọn màu" placement="top">
-      <Button
+      <!-- <Button
         class="mg"
         type="primary"
         shape="circle"
         icon="md-color-palette"
-      ></Button>
+      ></Button> -->
+      <ColorPicker v-model="colorDraw" @on-change="colorChange" />
     </Tooltip>
     <Tooltip content="Vẽ mũi tên" placement="top">
       <Button
@@ -37,15 +38,27 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 export default {
+  data() {
+    return {
+      colorDraw: "#FF0000",
+    };
+  },
   methods: {
     ...mapActions(["startDraw"]),
+    ...mapMutations(["setColorDraw"]),
     drawArrow() {
       this.startDraw("Arrow");
     },
+
+    colorChange(data) {
+      this.setColorDraw(data);
+    },
   },
-  computed: {},
+  computed: {
+    // ...mapGetters(["colorDraw"]),
+  },
 };
 </script>
 
@@ -53,7 +66,7 @@ export default {
 .control-plan {
   position: absolute;
   top: 10px;
-  left: 50px;
+  left: 150px;
   z-index: 999;
 }
 .mg {

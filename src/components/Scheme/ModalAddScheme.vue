@@ -11,7 +11,6 @@
       :model="scheme"
       :label-width="100"
     >
-      <!-- <Form :model="formLeft" label-position="left" :label-width="100"> -->
       <FormItem label="Tên ">
         <Input
           type="text"
@@ -68,12 +67,7 @@ export default {
   data() {
     return {
       scheme: {
-        name: "",
-        idDonVi: null,
-        time_start: null,
-        note: "",
-        geom: null,
-        validate: {},
+        ...this.defaultScheme,
       },
       cityList: [
         {
@@ -81,12 +75,20 @@ export default {
           label: "New York",
         },
       ],
-      model11: "",
-      model12: [],
+      defaultScheme: {
+        name: "",
+        idDonVi: null,
+        time_start: null,
+        note: "",
+        geom: null,
+      },
     };
   },
+  created() {
+    this.setIsDrawingScheme(false);
+  },
   computed: {
-    ...mapGetters(["isDrawingScheme", "draw"]),
+    ...mapGetters(["isDrawingScheme", "draw", "colorDraw", "map"]),
   },
   methods: {
     ...mapMutations(["setIsDrawingScheme"]),
@@ -95,7 +97,7 @@ export default {
       this.setIsDrawingScheme(false);
       this.clearSourceDraw();
     },
-    save() {
+    async save() {
       const source = this.draw.source_;
       var geoJSONformat = new GeoJSON();
       var featureGeojson = geoJSONformat.writeFeaturesObject(
@@ -105,7 +107,25 @@ export default {
       const geom = geojsonFeatureArray[0].geometry;
       this.scheme.geom = geom;
 
-      console.log(this.planId);
+      const res = await this.callApi("post", "/schemes/create", {
+        scheme: { ...this.scheme, color_scheme: this.colorDraw },
+        planId: this.planId,
+      });
+      if (res.status === 200) {
+        this.s("Thêm thành công");
+        // this.onShow = false;
+        this.$emit("addScheme", res.data);
+        this.scheme = { ...this.defaultScheme };
+        this.setIsDrawingScheme(false);
+        this.map.render();
+      } else {
+        if (res.status === 500) {
+          this.e(res.data.message);
+          return;
+        } else {
+          this.swr();
+        }
+      }
     },
   },
 };

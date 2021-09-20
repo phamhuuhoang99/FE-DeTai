@@ -16,10 +16,16 @@ export default {
     params: { LAYERS: "hoang:missions", tiled: true },
     serverType: "geoserver",
   }),
+  sourceScheme: new TileWMS({
+    url: "http://localhost:8090/geoserver/hoang/wms",
+    params: { LAYERS: "hoang:schemes", tiled: true },
+    serverType: "geoserver",
+  }),
   view: new View(),
   draw: null,
   overlay: null,
   isDrawingScheme: false,
+  colorDraw: "#FF0000",
   missions: [],
-  planSeeDetail: Object,
+  // planSeeDetail: Object,
 };

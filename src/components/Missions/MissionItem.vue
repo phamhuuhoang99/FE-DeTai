@@ -88,8 +88,10 @@
         </Table>
       </TabPane>
 
-      <TabPane label="Đơn vị tham gia" icon="md-people"></TabPane>
-      <TabPane label="" icon="md-create"></TabPane>
+      <TabPane label="Đối tượng TKCN" icon="md-people">
+        <PersonSearch />
+      </TabPane>
+      <TabPane label="CSVC Bảo vệ" icon="md-settings"></TabPane>
       <!-- <TabPane label="" icon="ios-pricetags">标签三的内容</TabPane>
       <TabPane label="" icon="ios-paper">标签三的内容</TabPane> -->
     </Tabs>
@@ -98,8 +100,10 @@
 <script>
 import { eventBus } from "../../main";
 import { mapGetters } from "vuex";
+import PersonSearch from "../PersionSearch/PersonSearch.vue";
 export default {
   props: ["missionDetail", "showAddPlan"],
+  components: { PersonSearch },
   data() {
     return {
       columns1: [
@@ -126,6 +130,7 @@ export default {
           align: "center",
         },
       ],
+
       data1: this.missionDetail.plans,
     };
   },
@@ -145,8 +150,8 @@ export default {
     zoomToMission() {
       const coordinates = this.missionDetail.location.coordinates;
       this.view.animate({
-        zoom: 13,
-        duration: 800,
+        zoom: 18,
+        duration: 900,
         center: coordinates,
       });
     },

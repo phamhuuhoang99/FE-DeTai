@@ -20,6 +20,10 @@ body {
   margin: 0;
 }
 
+* {
+  word-break: break-word !important;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   height: 100%;

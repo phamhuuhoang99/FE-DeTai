@@ -1,12 +1,15 @@
 <template>
-  <div>
+  <fragment>
     <div class="button_add">
-      <Button type="primary"><Icon type="ios-add" />Thêm</Button>
+      <Button type="primary" icon="ios-add" @click="onShowModalAdd"
+        >Thêm</Button
+      >
     </div>
     <Table border :columns="columns12" :data="data6">
       <template slot-scope="{ row }" slot="name">
         <strong>{{ row.name }}</strong>
       </template>
+
       <template slot="action">
         <Button type="primary" size="small" style="margin-right: 5px"
           >Sửa</Button
@@ -14,16 +17,20 @@
         <Button type="error" size="small">Xóa</Button>
       </template>
     </Table>
-  </div>
+    <ModalAdd :show="showModalAdd" :hide="hideModalAdd" />
+  </fragment>
 </template>
 <script>
+import ModalAdd from "./ModalAdd.vue";
 export default {
+  components: {
+    ModalAdd,
+  },
   data() {
     return {
       columns12: [
-        { title: "Id", key: "id" },
         {
-          title: "Name",
+          title: "Kiểu thảm họa",
           slot: "name",
         },
         {
@@ -47,29 +54,31 @@ export default {
       ],
       data6: [
         {
-          name: "John Brown",
-          age: 18,
-          address: "New York No. 1 Lake Park",
+          name: "Cháy",
         },
         {
-          name: "Jim Green",
-          age: 24,
-          address: "London No. 1 Lake Park",
-        },
-        {
-          name: "Joe Black",
-          age: 30,
-          address: "Sydney No. 1 Lake Park",
-        },
-        {
-          name: "Jon Snow",
-          age: 26,
-          address: "Ottawa No. 2 Lake Park",
+          name: "Nổ",
         },
       ],
+      showModalAdd: false,
+      showModalDelete: false,
     };
   },
-  methods: {},
+  methods: {
+    onShowModalAdd() {
+      this.showModalAdd = true;
+    },
+    hideModalAdd() {
+      this.showModalAdd = false;
+    },
+    // onShowModalDelete() {
+    //   this.showModalDelete = true;
+    // },
+
+    // hideModalDelete() {
+    //   this.showModalDelete = false;
+    // },
+  },
 };
 </script>
 <style scoped>

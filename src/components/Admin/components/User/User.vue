@@ -4,7 +4,6 @@
       <Icon type="ios-add" />
       Thêm</Button
     >
-
     <Table style="margin-top: 15px" border :columns="columns" :data="users">
       <template slot-scope="{ row }" slot="first_name">
         <strong>{{ row.first_name }}</strong>
@@ -54,24 +53,34 @@ export default {
     return {
       columns: [
         {
+          type: "index",
+          width: 50,
+          align: "center",
+        },
+        {
           title: "Họ",
           key: "last_name",
+          align: "center",
         },
         {
           title: "Tên",
           slot: "first_name",
+          align: "center",
         },
         {
           title: "Tên tài khoản",
           key: "username",
+          align: "center",
         },
         {
           title: "Email",
           key: "email",
+          align: "center",
         },
         {
           title: "Số điện thoại",
           key: "phone",
+          align: "center",
         },
         {
           title: "Action",

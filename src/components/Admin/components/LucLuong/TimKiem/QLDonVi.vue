@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="button_add">
-      <Button type="primary" icon="ios-add" @click="onShowModalAdd"
+      <Button @click="onShowModalAdd" type="primary" icon="ios-add"
         >Thêm</Button
       >
     </div>
-    <Table style="margin-top: 15px" border :columns="columns12" :data="data6">
+    <Table style="margin-top: 15px" border :columns="columns" :data="data">
       <template slot-scope="{ row }" slot="name">
         <strong>{{ row.name }}</strong>
       </template>
@@ -20,48 +20,51 @@
     <ModalAdd :show="showModalAdd" :hide="hideModalAdd" />
   </div>
 </template>
+
 <script>
 import ModalAdd from "./ModalAdd.vue";
 export default {
-  components: {
-    ModalAdd,
-  },
+  components: { ModalAdd },
   data() {
     return {
-      columns12: [
+      columns: [
         {
-          title: "Kiểu thảm họa",
-          slot: "name",
+          type: "index",
+          width: 50,
+          align: "center",
         },
         {
-          title: "Hình ảnh",
+          title: "Tên đơn vị",
+          key: "name",
+          align: "center",
+        },
+        {
+          title: "Quân số",
+          key: "total",
+          align: "center",
+        },
+        {
+          title: "Số lượng phương tiện",
+          key: "totalVehicle",
+          align: "center",
+        },
+        {
+          title: "Symbol",
           key: "symbol",
+          align: "center",
         },
         {
-          title: "Đặc thù thảm họa",
-          key: "dacthu",
-        },
-        {
-          title: "Ghi chú",
-          key: "note",
-        },
-        {
-          title: "Action",
-          slot: "action",
-          width: 150,
+          title: "Vị trí",
+          key: "posision",
           align: "center",
         },
       ],
-      data6: [
+      data: [
         {
-          name: "Cháy",
-        },
-        {
-          name: "Nổ",
+          name: "Huu hoang",
         },
       ],
       showModalAdd: false,
-      showModalDelete: false,
     };
   },
   methods: {
@@ -81,8 +84,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-.button_add {
-  margin: 10px 0;
-}
-</style>
+<style></style>

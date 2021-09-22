@@ -8,6 +8,7 @@ import ViewMap from "./components/ViewMap";
 import CreateUser from "./components/Admin/components/User/User.vue";
 import KieuThamHoa from "./components/Admin/components/ThamHoa/KieuThamHoa.vue";
 import Login from "./components/Login/Login.vue";
+import QLDonVi from "./components/Admin/components/LucLuong/TimKiem/QLDonVi.vue";
 
 const routes = [
   {
@@ -20,14 +21,19 @@ const routes = [
         name: "dashboard",
       },
       {
-        path: "quan-li-nguoi-dung",
+        path: "/quan-li-nguoi-dung",
         component: CreateUser,
         name: "create-user",
       },
       {
-        path: "kieu-tham-hoa",
+        path: "/kieu-tham-hoa",
         component: KieuThamHoa,
         name: "kieuThamHoa",
+      },
+      {
+        path: "/don-vi-tim-kiem",
+        component: QLDonVi,
+        name: "donViTimKiem",
       },
     ],
   },

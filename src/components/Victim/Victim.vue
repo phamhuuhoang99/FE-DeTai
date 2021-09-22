@@ -37,16 +37,22 @@
       </template>
     </Table>
 
-    <ModalAddPerson :show="showModalAdd" :hide="hideModalAdd" />
-    <ModalDeletePerson :show="showModalDelete" :hide="hideModalDelete" />
+    <ModalAddVictim
+      :show="showModalAdd"
+      :hide="hideModalAdd"
+      :missionId="missionId"
+      @addVictim="addVictimHandler"
+    />
+    <ModalDeleteVictim :show="showModalDelete" :hide="hideModalDelete" />
   </fragment>
 </template>
 
 <script>
-import ModalAddPerson from "./ModalAddPerson.vue";
-import ModalDeletePerson from "./ModalDeletePerson.vue";
+import ModalAddVictim from "./ModalAddVictim.vue";
+import ModalDeleteVictim from "./ModalDeleteVictim.vue";
 export default {
-  components: { ModalAddPerson, ModalDeletePerson },
+  components: { ModalAddVictim, ModalDeleteVictim },
+  props: ["missionId"],
   data() {
     return {
       columns: [
@@ -70,13 +76,13 @@ export default {
         },
         {
           title: "Quê quán",
-          key: "nativePlace",
+          key: "hometown",
           width: 130,
           align: "center",
         },
         {
           title: "Đặc điểm",
-          key: "",
+          key: "characteristic",
           width: 100,
           align: "center",
         },
@@ -96,11 +102,7 @@ export default {
       ],
       showModalAdd: false,
       showModalDelete: false,
-      data: [
-        {
-          name: "Huu Hoang",
-        },
-      ],
+      data: [],
     };
   },
   methods: {
@@ -116,6 +118,11 @@ export default {
 
     hideModalDelete() {
       this.showModalDelete = false;
+    },
+    addVictimHandler(data) {
+      this.showModalAdd = false;
+      console.log(data);
+      this.data.push(data);
     },
   },
 };

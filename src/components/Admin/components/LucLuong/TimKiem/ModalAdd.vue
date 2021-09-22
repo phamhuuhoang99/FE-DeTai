@@ -1,28 +1,21 @@
 <template>
   <Modal
     v-model="onShow"
-    title="Thêm người cần TKCN"
+    title="Thêm Đơn vị tìm Kiếm"
     :closable="false"
     :mask-closable="false"
   >
     <Form :label-width="80">
-      <FormItem label="Họ tên">
+      <FormItem label="Tên đơn vị">
         <Input placeholder="Nhập tên ..." />
       </FormItem>
-      <FormItem label="Ngày sinh">
-        <DatePicker type="date" placeholder="Ngày sinh"></DatePicker>
+      <FormItem label="Quân số">
+        <Input placeholder="Nhập Quân số..." />
       </FormItem>
-      <FormItem label="Quê quán">
-        <Input placeholder="Nhập quê quán ..." />
+      <FormItem label="Số lượng phương tiện">
+        <Input placeholder="Nhập số phương tiện..." />
       </FormItem>
-      <FormItem label="Đặc điểm nhận dạng">
-        <Input
-          type="textarea"
-          :autosize="{ minRows: 2, maxRows: 5 }"
-          placeholder="Nhập đặc điểm..."
-        ></Input>
-      </FormItem>
-      <FormItem label="Hình ảnh">
+      <FormItem label="Symbol">
         <Upload action="//jsonplaceholder.typicode.com/posts/">
           <Button icon="ios-cloud-upload-outline">Upload files</Button>
         </Upload>

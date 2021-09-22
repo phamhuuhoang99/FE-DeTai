@@ -89,7 +89,7 @@
       </TabPane>
 
       <TabPane label="Đối tượng TKCN" icon="md-people">
-        <PersonSearch />
+        <Victim :missionId="missionDetail.id" />
       </TabPane>
       <TabPane label="CSVC Bảo vệ" icon="md-settings">
         <Material />
@@ -100,11 +100,11 @@
 <script>
 import { eventBus } from "../../main";
 import { mapGetters } from "vuex";
-import PersonSearch from "../PersionSearch/PersonSearch.vue";
+import Victim from "../Victim/Victim.vue";
 import Material from "../Material/Material.vue";
 export default {
   props: ["missionDetail", "showAddPlan"],
-  components: { PersonSearch, Material },
+  components: { Victim, Material },
   data() {
     return {
       columns1: [

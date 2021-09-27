@@ -10,14 +10,24 @@
       :columns="columns"
       :data="data"
     >
-      <template slot-scope="" slot="action">
+      <template slot-scope="{ index }" slot="image">
+        <Avatar
+          v-if="data[index].image.length > 0"
+          :src="preUrl + '/uploads/' + data[index].image"
+          shape="square"
+          icon="ios-person"
+          size="large"
+        />
+      </template>
+
+      <template slot-scope="{ index }" slot="action">
         <Button
           type="error"
           shape="circle"
           icon="ios-trash"
           size="small"
           style="margin-right: 5px"
-          @click="onShowModalDelete"
+          @click="onShowModalDelete(index)"
         ></Button>
 
         <Button
@@ -43,7 +53,12 @@
       :missionId="missionId"
       @addVictim="addVictimHandler"
     />
-    <ModalDeleteVictim :show="showModalDelete" :hide="hideModalDelete" />
+    <ModalDeleteVictim
+      :show="showModalDelete"
+      :victim="victimDelete"
+      :hide="hideModalDelete"
+      @deleteVictim="deleteVictimHandler"
+    />
   </fragment>
 </template>
 
@@ -60,7 +75,6 @@ export default {
           type: "index",
           width: 50,
           align: "center",
-          fixed: "left",
         },
         {
           title: "Họ tên",
@@ -89,6 +103,7 @@ export default {
         {
           title: "Hình ảnh",
           key: "image",
+          slot: "image",
           width: 100,
           align: "center",
         },
@@ -100,10 +115,18 @@ export default {
           fixed: "right",
         },
       ],
+      data: [],
+      victimDelete: null,
+      indexVictimDelete: null,
       showModalAdd: false,
       showModalDelete: false,
-      data: [],
+      preUrl: process.env.VUE_APP_ROOT_API,
     };
+  },
+  computed: {
+    urlImage: function(index) {
+      return index;
+    },
   },
   methods: {
     onShowModalAdd() {
@@ -112,8 +135,10 @@ export default {
     hideModalAdd() {
       this.showModalAdd = false;
     },
-    onShowModalDelete() {
+    onShowModalDelete(index) {
       this.showModalDelete = true;
+      this.indexVictimDelete = index;
+      this.victimDelete = this.data[index];
     },
 
     hideModalDelete() {
@@ -124,6 +149,18 @@ export default {
       console.log(data);
       this.data.push(data);
     },
+    deleteVictimHandler() {
+      this.data.splice(this.indexVictimDelete, 1);
+      this.indexVictimDelete = null;
+      this.victimDelete = null;
+    },
+  },
+  async created() {
+    const res = await this.callApi("get", "/victims");
+
+    if (res.status === 200) {
+      this.data = res.data;
+    }
   },
 };
 </script>

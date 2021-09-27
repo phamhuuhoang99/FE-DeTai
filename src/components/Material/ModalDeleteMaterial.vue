@@ -10,7 +10,7 @@
       </div>
       <div slot="footer">
         <Button type="default" size="large" @click="hide()">Hủy</Button>
-        <Button type="error" size="large">Xóa</Button>
+        <Button @click="deleteMaterial" type="error" size="large">Xóa</Button>
       </div>
     </Modal>
   </div>
@@ -18,13 +18,23 @@
 
 <script>
 export default {
-  props: ["show", "hide"],
+  props: ["show", "hide", "materialId"],
   data() {
     return {};
   },
   methods: {
     closeModal() {
       this.showModalDelete = false;
+    },
+    async deleteMaterial() {
+      const res = await this.callApi("delete", "/materials/" + this.materialId);
+
+      if (res.status === 200) {
+        this.s("Xóa CSVC thành công");
+        this.$emit("deleteMaterial");
+      } else {
+        this.swr();
+      }
     },
   },
   computed: {

@@ -8,16 +8,16 @@
       style="margin-top:10px"
       border
       :columns="columns"
-      :data="data"
+      :data="materials"
     >
-      <template slot-scope="" slot="action">
+      <template slot-scope="{ index }" slot="action">
         <Button
           type="error"
           shape="circle"
           icon="ios-trash"
           size="small"
           style="margin-right: 5px"
-          @click="onShowModalDelete"
+          @click="onShowModalDelete(index)"
         ></Button>
 
         <Button
@@ -29,8 +29,18 @@
         ></Button>
       </template>
     </Table>
-    <ModalAddMaterial :show="showModalAdd" :hide="onHideModalAdd" />
-    <ModalDeleteMaterial :show="showModalDelete" :hide="onHideModalDelete" />
+    <ModalAddMaterial
+      :show="showModalAdd"
+      :hide="onHideModalAdd"
+      :missionId="missionId"
+      @addMaterial="addMaterialHandler"
+    />
+    <ModalDeleteMaterial
+      :show="showModalDelete"
+      :hide="onHideModalDelete"
+      :materialId="idMaterialDelete"
+      @deleteMaterial="deleteMaterialHandler"
+    />
   </fragment>
 </template>
 
@@ -39,6 +49,7 @@ import ModalAddMaterial from "./ModalAddMaterial.vue";
 import ModalDeleteMaterial from "./ModalDeleteMaterial.vue";
 export default {
   components: { ModalAddMaterial, ModalDeleteMaterial },
+  props: ["missionId"],
   data() {
     return {
       columns: [
@@ -46,7 +57,6 @@ export default {
           type: "index",
           width: 50,
           align: "center",
-          fixed: "left",
         },
         {
           title: "Tên CSVC",
@@ -76,11 +86,9 @@ export default {
           fixed: "right",
         },
       ],
-      data: [
-        {
-          name: "Huu Hoang",
-        },
-      ],
+      materials: [],
+      indexMaterialDelete: null,
+      idMaterialDelete: null,
       showModalAdd: false,
       showModalDelete: false,
     };
@@ -92,12 +100,30 @@ export default {
     onHideModalAdd() {
       this.showModalAdd = false;
     },
-    onShowModalDelete() {
+    onShowModalDelete(index) {
       this.showModalDelete = true;
+      this.indexMaterialDelete = index;
+      this.idMaterialDelete = this.materials[index].id;
     },
     onHideModalDelete() {
       this.showModalDelete = false;
     },
+    addMaterialHandler(data) {
+      this.showModalAdd = false;
+      this.materials.push(data);
+    },
+    deleteMaterialHandler() {
+      this.materials.splice(this.indexMaterialDelete, 1);
+      this.indexMaterialDelete = null;
+      this.idMaterialDelete = null;
+      this.showModalDelete = false;
+    },
+  },
+  async created() {
+    const res = await this.callApi("get", "/materials");
+    if (res.status === 200) {
+      this.materials = res.data;
+    }
   },
 };
 </script>

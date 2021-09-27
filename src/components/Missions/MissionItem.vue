@@ -92,7 +92,7 @@
         <Victim :missionId="missionDetail.id" />
       </TabPane>
       <TabPane label="CSVC Bảo vệ" icon="md-settings">
-        <Material />
+        <Material :missionId="missionDetail.id" />
       </TabPane>
     </Tabs>
   </Card>

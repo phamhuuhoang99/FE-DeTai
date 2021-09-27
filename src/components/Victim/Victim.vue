@@ -146,7 +146,6 @@ export default {
     },
     addVictimHandler(data) {
       this.showModalAdd = false;
-      console.log(data);
       this.data.push(data);
     },
     deleteVictimHandler() {
@@ -157,7 +156,6 @@ export default {
   },
   async created() {
     const res = await this.callApi("get", "/victims");
-
     if (res.status === 200) {
       this.data = res.data;
     }

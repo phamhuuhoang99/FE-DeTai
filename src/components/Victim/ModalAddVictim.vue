@@ -155,9 +155,9 @@ export default {
         this.victim.image = "";
         this.victim.url = "";
       }
-      var hinh = image.split("/");
+
       const res = await this.callApi("post", "/victims/delete-image", {
-        imageName: hinh[0].toString(),
+        imageName: image,
       });
       console.log(res);
       // if (res.status !== 200) {

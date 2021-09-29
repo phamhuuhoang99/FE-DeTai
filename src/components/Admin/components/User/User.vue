@@ -4,7 +4,13 @@
       <Icon type="ios-add" />
       Thêm</Button
     >
-    <Table style="margin-top: 15px" border :columns="columns" :data="users">
+    <Table
+      style="margin-top: 15px"
+      border
+      :columns="columns"
+      :data="users"
+      no-data-text="Không có dữ liệu"
+    >
       <template slot-scope="{ row }" slot="first_name">
         <strong>{{ row.first_name }}</strong>
       </template>

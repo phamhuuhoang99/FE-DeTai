@@ -45,7 +45,9 @@
         <Icon type="md-people" />
         Lực lượng Quân Y
       </template>
-      <MenuItem name="4-1"> <Icon type="md-list" />Đơn vị </MenuItem>
+      <MenuItem name="4-1" :to="{ name: 'donViQuanY' }">
+        <Icon type="md-list" />Đơn vị
+      </MenuItem>
       <MenuItem name="4-2"> <Icon type="md-list" />Nhân sự </MenuItem>
     </Submenu>
   </Menu>

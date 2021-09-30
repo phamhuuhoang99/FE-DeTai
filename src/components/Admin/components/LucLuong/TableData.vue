@@ -1,30 +1,33 @@
 <template>
   <div>
-    <div class="button_add">
-      <Button @click="onShowModalAdd" type="primary" icon="ios-add"
-        >Thêm</Button
-      >
-    </div>
     <Table style="margin-top: 15px" border :columns="columns" :data="data">
       <template slot-scope="{ row }" slot="name">
         <strong>{{ row.name }}</strong>
       </template>
-
-      <template slot="action">
+      <template slot-scope="{ index }" slot="image">
+        <Avatar
+          v-if="data[index].image.length > 0"
+          :src="preUrl + '/uploads/units/' + data[index].image"
+          shape="square"
+          icon="ios-person"
+          size="large"
+        />
+      </template>
+      <template slot-scope="{ index }" slot="action">
         <Button type="primary" size="small" style="margin-right: 5px"
           >Sửa</Button
         >
-        <Button type="error" size="small">Xóa</Button>
+        <Button @click="deleteUnit(index)" type="error" size="small"
+          >Xóa</Button
+        >
       </template>
     </Table>
-    <ModalAdd :show="showModalAdd" :hide="hideModalAdd" />
   </div>
 </template>
 
 <script>
-import ModalAdd from "./ModalAdd.vue";
 export default {
-  components: { ModalAdd },
+  props: ["listUnit"],
   data() {
     return {
       columns: [
@@ -40,17 +43,18 @@ export default {
         },
         {
           title: "Quân số",
-          key: "total",
+          key: "number",
           align: "center",
         },
         {
           title: "Số lượng phương tiện",
-          key: "totalVehicle",
+          key: "vehicleNumber",
           align: "center",
         },
         {
           title: "Symbol",
-          key: "symbol",
+          slot: "image",
+          key: "image",
           align: "center",
         },
         {
@@ -58,29 +62,29 @@ export default {
           key: "posision",
           align: "center",
         },
-      ],
-      data: [
         {
-          name: "Huu hoang",
+          title: "Action",
+          slot: "action",
+          width: 150,
+          align: "center",
         },
       ],
-      showModalAdd: false,
+      data: [],
+      preUrl: process.env.VUE_APP_ROOT_API,
     };
   },
   methods: {
-    onShowModalAdd() {
-      this.showModalAdd = true;
+    deleteUnit(index) {
+      this.$emit("deleteUnit", this.data[index]);
     },
-    hideModalAdd() {
-      this.showModalAdd = false;
+  },
+  created() {
+    this.data = this.listUnit;
+  },
+  watch: {
+    listUnit: function(data) {
+      this.data = data;
     },
-    // onShowModalDelete() {
-    //   this.showModalDelete = true;
-    // },
-
-    // hideModalDelete() {
-    //   this.showModalDelete = false;
-    // },
   },
 };
 </script>

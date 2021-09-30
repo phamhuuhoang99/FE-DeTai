@@ -5,7 +5,7 @@
         >Thêm</Button
       >
     </div>
-    <DVTimKiem :listUnit="data" @deleteUnit="onDeleteUnitHandler" />
+    <TableData :listUnit="data" @deleteUnit="onDeleteUnitHandler" />
     <!-- <DVQuanY v-if="isRouteQuanY" :listUnit="listUnitTK" /> -->
     <ModalAdd
       :show="showModalAdd"
@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import DVTimKiem from "./TableData.vue";
+import TableData from "./TableData.vue";
 import ModalDelete from "./ModalDelete.vue";
 import ModalAdd from "./ModalAdd.vue";
 export default {
-  components: { DVTimKiem, ModalDelete, ModalAdd },
+  components: { TableData, ModalDelete, ModalAdd },
   data() {
     return {
       showModalAdd: false,
@@ -58,11 +58,9 @@ export default {
       this.showModalDelete = false;
     },
     addUnitHandler(data) {
-      console.log(data);
       this.showModalAdd = false;
       if (data.typeUnit === "TK") {
         this.listUnitTK.push(data);
-        console.log(this.listUnitTK);
       } else if (data.typeUnit === "QY") this.listUnitQY.push(data);
     },
     onDeleteUnitHandler(unit) {
@@ -70,7 +68,6 @@ export default {
       this.unitDelete = unit;
     },
     deleteUnitHandler() {
-      console.log(this.listUnitTK);
       if (this.unitDelete.typeUnit === "QY") {
         let index = this.listUnitQY.findIndex((item) => {
           return item.id === this.unitDelete.id;

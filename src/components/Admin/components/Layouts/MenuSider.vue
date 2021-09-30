@@ -37,7 +37,9 @@
       <MenuItem :to="{ name: 'donViTimKiem' }" name="3-1"
         ><Icon type="md-list" />Đơn vị</MenuItem
       >
-      <MenuItem name="3-2"><Icon type="md-list" />Nhân sự</MenuItem>
+      <MenuItem name="3-2" :to="{ name: 'nhanSuTimKiem' }"
+        ><Icon type="md-list" />Nhân sự</MenuItem
+      >
       <MenuItem name="3-3"><Icon type="md-list" />Phương tiện</MenuItem>
     </Submenu>
     <Submenu name="4">
@@ -49,6 +51,7 @@
         <Icon type="md-list" />Đơn vị
       </MenuItem>
       <MenuItem name="4-2"> <Icon type="md-list" />Nhân sự </MenuItem>
+      <MenuItem name="4-3"><Icon type="md-list" />Phương tiện</MenuItem>
     </Submenu>
   </Menu>
 </template>

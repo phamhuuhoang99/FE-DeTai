@@ -9,6 +9,7 @@ import CreateUser from "./components/Admin/components/User/User.vue";
 import KieuThamHoa from "./components/Admin/components/ThamHoa/KieuThamHoa.vue";
 import Login from "./components/Login/Login.vue";
 import Unit from "./components/Admin/components/LucLuong/Unit.vue";
+import Personnel from "./components/Admin/components/Personel/Personnel.vue";
 
 const routes = [
   {
@@ -39,6 +40,16 @@ const routes = [
         path: "/don-vi-quan-y",
         component: Unit,
         name: "donViQuanY",
+      },
+      {
+        path: "/nhan-su-quan-y",
+        component: Personnel,
+        name: "nhanSuQuanY",
+      },
+      {
+        path: "/nhan-su-tim-kiem",
+        component: Personnel,
+        name: "nhanSuTimKiem",
       },
     ],
   },

@@ -31,13 +31,20 @@ export default {
       (mission) => mission.id !== missionId
     );
   },
+  UPDATE_MISSION(state, mission) {
+    const indexMission = state.missions.findIndex((item) => {
+      return item.id === mission.id;
+    });
+
+    state.missions[indexMission] = { ...mission };
+  },
   setIsDrawingScheme(state, isDrawingScheme) {
     state.isDrawingScheme = isDrawingScheme;
   },
   setColorDraw(state, colorDraw) {
     state.colorDraw = colorDraw;
   },
-  // setPlanSeeDetail(state, plan) {
-  //   state.planSeeDetail = plan;
-  // },
+  setSourceBaseMap(state, sourceBaseMap) {
+    state.sourceBaseMap = sourceBaseMap;
+  },
 };

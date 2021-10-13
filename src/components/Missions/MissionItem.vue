@@ -12,7 +12,7 @@
           <span @click="deleteMission(missionDetail)">
             <Icon type="md-trash" size="20" color="red" />
           </span>
-          <span style="margin-left:5px">
+          <span style="margin-left:5px" @click="editMission">
             <Icon type="ios-create" size="20" color="#ff9900" />
           </span>
           <span style="margin-left:5px" @click="zoomToMission">
@@ -41,7 +41,7 @@
         <Col span="12">{{ missionDetail.description }}</Col>
       </Row>
     </div>
-
+    <Divider />
     <Tabs type="card">
       <TabPane label="Kế hoạch" size="large" icon="logo-buffer">
         <Button @click="showAddPlan(missionDetail)" shape="circle" icon="md-add"
@@ -102,6 +102,10 @@ import { eventBus } from "../../main";
 import { mapGetters } from "vuex";
 import Victim from "../Victim/Victim.vue";
 import Material from "../Material/Material.vue";
+// import { Snap, Modify } from "ol/interaction";
+import { modifySnapMap } from "../../common/modifySnapMap";
+import GeoJSON from "ol/format/GeoJSON";
+import { editFeaturePoint } from "../../common/editFeaturePoint";
 export default {
   props: ["missionDetail", "showAddPlan"],
   components: { Victim, Material },
@@ -156,9 +160,36 @@ export default {
         center: coordinates,
       });
     },
+    editMission() {
+      const modify = modifySnapMap(this.layerMission).modify;
+      const snap = modifySnapMap(this.layerMission).snap;
+
+      this.map.addInteraction(snap);
+      this.map.addInteraction(modify);
+      const sourceMissionLayer = this.layerMission.getSource();
+
+      editFeaturePoint(sourceMissionLayer, this.missions, this.missionDetail);
+      modify.on("modifyend", () => {
+        var geoJSONformat = new GeoJSON();
+        var featureGeojson = geoJSONformat.writeFeaturesObject(
+          modify
+            .getOverlay()
+            .getSource()
+            .getFeatures()
+        );
+
+        const geojsonFeatureArray = featureGeojson.features;
+        const geom = geojsonFeatureArray[0].geometry;
+        const editMap = {
+          snap,
+          modify,
+        };
+        this.$emit("editModalMission", this.missionDetail, geom, editMap);
+      });
+    },
   },
   computed: {
-    ...mapGetters(["view"]),
+    ...mapGetters(["view", "map", "layerMission", "missions"]),
   },
 };
 </script>

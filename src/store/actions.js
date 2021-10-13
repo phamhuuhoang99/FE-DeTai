@@ -1,14 +1,20 @@
 import Map from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
-import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS";
 import { Vector as VectorSource } from "ol/source";
 import { Vector as VectorLayer } from "ol/layer";
 import Draw from "ol/interaction/Draw";
 import "ol/ol.css";
 import mapConfig from "../../src/mapConfig";
-import { Circle as CircleStyle, Fill, Stroke, Style, Icon } from "ol/style";
+import {
+  Circle as CircleStyle,
+  Fill,
+  Stroke,
+  Style,
+  Icon,
+  Circle,
+} from "ol/style";
 import { FullScreen, defaults as defaultControls } from "ol/control";
 import ZoomSlider from "ol/control/ZoomSlider";
 import Overlay from "ol/Overlay";
@@ -20,36 +26,84 @@ import { flash } from "../animation/animation";
 import { getVectorContext } from "ol/render";
 import axios from "axios";
 import * as turf from "@turf/turf";
+import GeoJSON from "ol/format/GeoJSON";
+import { bbox as bboxStrategy } from "ol/loadingstrategy";
+
 // import { transform } from "ol/proj";
 
 export default {
   getAllTileLayers(context) {
-    let allLayers = mapConfig.map.layers;
-    let layers = [];
-    for (let i = 0; i < allLayers.length; i++) {
-      if (allLayers[i].layerName) {
+    //get layer wms
+    let allLayersWMS = mapConfig.map.wms.layers;
+    let layersWMS = [];
+    for (let i = 0; i < allLayersWMS.length; i++) {
+      if (allLayersWMS[i].layerName) {
         let layer = new TileLayer({
           source: new TileWMS({
-            url: mapConfig.map.geoserver,
-            params: { LAYERS: allLayers[i].layerName, TILED: true },
+            url: mapConfig.map.wms.geoserver,
+            params: { LAYERS: allLayersWMS[i].layerName, TILED: true },
             serverType: "geoserver",
           }),
-          visible: allLayers[i].visible,
-          zIndex: allLayers[i].zIndex,
+          visible: allLayersWMS[i].visible,
+          zIndex: allLayersWMS[i].zIndex,
         });
-        layers.push(layer);
+        layersWMS.push(layer);
       }
     }
-    context.commit("setLayers", layers);
+
+    //index 0 of layersWMS baseMap
+    const INDEX_BASE_MAP = 0;
+    context.commit("setSourceBaseMap", layersWMS[INDEX_BASE_MAP].getSource());
+
+    //get layer wfs
+    let allLayersWFS = mapConfig.map.wfs.layers;
+    let layersWFS = [];
+
+    for (let i = 0; i < allLayersWFS.length; i++) {
+      if (allLayersWFS[i].layerName) {
+        let vectorSource = new VectorSource({
+          format: new GeoJSON(),
+          wrapX: false,
+          url: function(extent) {
+            return (
+              mapConfig.map.wfs.geoserver +
+              "?service=WFS&" +
+              "version=1.1.0&request=GetFeature&typename=" +
+              allLayersWFS[i].layerName +
+              "&outputFormat=application/json&srsname=EPSG:4326&" +
+              "bbox=" +
+              extent.join(",") +
+              ",EPSG:3857"
+            );
+          },
+          strategy: bboxStrategy,
+        });
+        var fill = new Fill({
+          color: "rgba(255,0,0,0.9)",
+        });
+
+        let layerWFS = new VectorLayer({
+          source: vectorSource,
+          style: new Style({
+            image: new Circle({
+              fill: fill,
+              radius: 5,
+            }),
+            fill: fill,
+          }),
+        });
+        layersWFS.push(layerWFS);
+      }
+    }
+    //i=0 Layer Vector Mission
+    const INDEX_LAYER_MISSION = 0;
+    context.commit("setLayerMission", layersWFS[INDEX_LAYER_MISSION]);
+
+    context.commit("setLayers", [...layersWMS, ...layersWFS]);
   },
   initMap(context) {
-    context.commit("setLayers", [
-      new TileLayer({
-        source: new OSM(), // tiles are served by OpenStreetMap
-      }),
-      ...context.state.layers,
-    ]);
-    context.commit("setLayerMission", context.state.layers[2]);
+    context.commit("setLayers", [...context.state.layers]);
+    // context.commit("setLayerMission", context.state.layers[2]);
 
     context.commit(
       "setView",
@@ -301,6 +355,9 @@ export default {
   deleteMission(context, missionId) {
     context.commit("DELETE_MISSION", missionId);
   },
+  updateMission(context, mission) {
+    context.commit("UPDATE_MISSION", mission);
+  },
   startSimulation(context, polyline) {
     var route = new LineString(polyline.coordinates).transform(
       "EPSG:4326",
@@ -393,17 +450,6 @@ export default {
     }
 
     startAnimation();
-
-    // console.log(polyline);
-    // let locations = polyline.coordinates;
-    // locations.map(function(l) {
-    //   return l.reverse();
-    // });
-
-    // console.log(polyline.coordinates);
-    // const route = new LineString(locations).transform("EPSG:4326", "EPSG:3857");
-    // var routeCoords = route.getCoordinates();
-    // var routeLength = routeCoords.length;
 
     // function stopAnimation() {
     //   animating = false;

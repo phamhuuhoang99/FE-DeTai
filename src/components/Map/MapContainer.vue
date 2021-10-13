@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { eventBus } from "../../main";
 import ControlDraw from "../ControlDraw/ControlDraw.vue";
 
@@ -35,8 +35,11 @@ export default {
     this.initMap();
     this.initEventClickMap();
     this.getMissions();
+    this.initLoadMap();
   },
-  computed: {},
+  computed: {
+    ...mapGetters(["sourceBaseMap"]),
+  },
   methods: {
     ...mapActions([
       "getAllTileLayers",
@@ -44,6 +47,15 @@ export default {
       "getMissions",
       "initEventClickMap",
     ]),
+    initLoadMap() {
+      this.sourceBaseMap.on("tileloadstart", () => {
+        this.$Loading.start();
+      });
+
+      this.sourceBaseMap.on("tileloadend", () => {
+        this.$Loading.finish();
+      });
+    },
   },
 };
 </script>

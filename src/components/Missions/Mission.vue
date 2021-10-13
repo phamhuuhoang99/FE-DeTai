@@ -30,32 +30,54 @@
     <MissionItem
       :showAddPlan="showModalPlan"
       @deleteModalMission="deleteModalMissionHandler"
+      @editModalMission="editModalMissionHandler"
       :missionDetail="mission"
       v-for="mission in missions"
       :key="mission.id"
     ></MissionItem>
+
+    <EditMission
+      :show="showModalEdit"
+      :mission="missionEdit"
+      :hide="onHideModalEdit"
+      :editMap="editMap"
+    />
   </div>
 </template>
 <script>
 import MissionItem from "./MissionItem.vue";
-import Point from "ol/geom/Point";
-import Feature from "ol/Feature";
-import { flash } from "../../animation/animation";
+import { resetAnimation } from "../../animation/resetAnimation";
 import { mapActions, mapGetters } from "vuex";
 import AddPlan from "../Plan/ModalAddPlan.vue";
+import EditMission from "./EditMission";
 export default {
-  components: { MissionItem, AddPlan },
+  components: { MissionItem, AddPlan, EditMission },
   data() {
     return {
       showModalDelete: false,
-      missionDelete: null,
+      missionDelete: Object,
       showModalAddPlan: false,
+      showModalEdit: false,
       missionAddPlan: Object,
+      missionEdit: {
+        name: "",
+        start_date: null,
+        end_date: null,
+        description: "",
+        location: null,
+      },
+      editMap: Object,
     };
   },
   mounted() {},
   computed: {
-    ...mapGetters(["layerMission", "sourceMission", "missions"]),
+    ...mapGetters([
+      "layerMission",
+      "sourceMission",
+      "missions",
+      "layers",
+      "map",
+    ]),
   },
 
   methods: {
@@ -75,29 +97,16 @@ export default {
       );
       if (res.status === 200) {
         this.s("Xoá nhiệm vụ thành công");
-        // this.missions.splice(indexObjDelete, 1);
         this.deleteMission(this.missionDelete.id);
         this.showModalDelete = false;
 
         this.clearSourceDraw();
-        this.updateLayer(this.layerMission, this.sourceMission);
+        // this.updateLayer(this.layerMission, this.sourceMission);
+        this.layerMission.getSource().refresh();
 
         this.clearInterval();
 
-        // //code ngu
-        const layer = this.$store.state.layers[1];
-        const map = this.$store.state.map;
-
-        this.missions.forEach((mission) => {
-          let coordinates = mission.location.coordinates;
-          let point = new Point(coordinates);
-          let feature = new Feature(point);
-
-          window.setInterval(() => {
-            flash(feature, layer, map);
-          }, 1000);
-        });
-        // // code ngu
+        resetAnimation(this.missions, this.layers[1], this.map);
       } else {
         this.swr();
       }
@@ -109,6 +118,17 @@ export default {
     hideModalPlan() {
       this.showModalAddPlan = false;
     },
+    onShowModalEdit() {
+      this.showModalEdit = true;
+    },
+    editModalMissionHandler(mission, newLocation, editMap) {
+      this.showModalEdit = true;
+      this.missionEdit = { ...mission, newLocation: newLocation };
+      this.editMap = editMap;
+    },
+    onHideModalEdit() {
+      this.showModalEdit = false;
+    },
   },
 };
 </script>
@@ -117,7 +137,6 @@ export default {
 .list-mission {
   color: "#000";
   margin: "5px 10px";
-  /* overflow: scroll; */
   height: 720px;
   overflow: auto;
 }

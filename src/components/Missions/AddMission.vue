@@ -76,7 +76,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["map", "layers", "view", "draw", "missions"]),
+    ...mapGetters([
+      "map",
+      "layers",
+      "view",
+      "draw",
+      "missions",
+      "layerMission",
+    ]),
   },
   methods: {
     ...mapActions(["clearSourceDraw", "addMission"]),
@@ -89,6 +96,7 @@ export default {
     async onSave() {
       this.$Loading.start();
       const source = this.draw.source_;
+      console.log(source);
       var geoJSONformat = new GeoJSON();
       var featureGeojson = geoJSONformat.writeFeaturesObject(
         source.getFeatures()
@@ -114,7 +122,8 @@ export default {
           this.swr();
         }
       }
-
+      this.layerMission.getSource().refresh();
+      this.clearSourceDraw();
       const center = geom.coordinates;
       const layer = this.layers[0];
       this.view.animate({

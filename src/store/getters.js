@@ -10,4 +10,7 @@ export default {
   // planSeeDetail: (state) => state.planSeeDetail,
   colorDraw: (state) => state.colorDraw,
   overlay: (state) => state.overlay,
+  sourceBaseMap: (state) => state.sourceBaseMap,
+  snap: (state) => state.snap,
+  modify: (state) => state.modify,
 };

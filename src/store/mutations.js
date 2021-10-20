@@ -38,6 +38,13 @@ export default {
 
     state.missions[indexMission] = { ...mission };
   },
+  UPDATE_SCHEME(state, scheme) {
+    const indexScheme = state.schemes.findIndex((item) => {
+      return item.id === scheme.id;
+    });
+
+    state.schemes[indexScheme] = { ...scheme };
+  },
   setIsDrawingScheme(state, isDrawingScheme) {
     state.isDrawingScheme = isDrawingScheme;
   },
@@ -46,5 +53,20 @@ export default {
   },
   setSourceBaseMap(state, sourceBaseMap) {
     state.sourceBaseMap = sourceBaseMap;
+  },
+  setSchemes(state, schemes) {
+    state.schemes = schemes;
+  },
+  setLayerScheme(state, layerScheme) {
+    state.layerScheme = layerScheme;
+  },
+  setTypeDrawScheme(state, typeDrawScheme) {
+    state.typeDrawScheme = typeDrawScheme;
+  },
+  setLayerOverlayEdit(state, layerOverlayEdit) {
+    state.layerOverlayEdit = layerOverlayEdit;
+  },
+  setIsEditingScheme(state, isEditingScheme) {
+    state.isEditingScheme = isEditingScheme;
   },
 };

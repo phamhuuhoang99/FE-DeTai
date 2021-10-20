@@ -77,6 +77,7 @@ export default {
       "missions",
       "layers",
       "map",
+      "layerScheme",
     ]),
   },
 
@@ -101,8 +102,8 @@ export default {
         this.showModalDelete = false;
 
         this.clearSourceDraw();
-        // this.updateLayer(this.layerMission, this.sourceMission);
         this.layerMission.getSource().refresh();
+        this.layerScheme.getSource().refresh();
 
         this.clearInterval();
 

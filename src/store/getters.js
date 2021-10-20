@@ -13,4 +13,9 @@ export default {
   sourceBaseMap: (state) => state.sourceBaseMap,
   snap: (state) => state.snap,
   modify: (state) => state.modify,
+  schemes: (state) => state.schemes,
+  layerScheme: (state) => state.layerScheme,
+  typeDrawScheme: (state) => state.typeDrawScheme,
+  layerOverlayEdit: (state) => state.layerOverlayEdit,
+  isEditingScheme: (state) => state.isEditingScheme,
 };

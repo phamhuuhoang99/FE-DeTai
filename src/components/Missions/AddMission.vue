@@ -96,7 +96,6 @@ export default {
     async onSave() {
       this.$Loading.start();
       const source = this.draw.source_;
-      console.log(source);
       var geoJSONformat = new GeoJSON();
       var featureGeojson = geoJSONformat.writeFeaturesObject(
         source.getFeatures()

@@ -28,6 +28,7 @@ import axios from "axios";
 import * as turf from "@turf/turf";
 import GeoJSON from "ol/format/GeoJSON";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
+import { styleFeatureScheme } from "../common/styleFeatureScheme";
 
 // import { transform } from "ol/proj";
 
@@ -98,7 +99,9 @@ export default {
     //i=0 Layer Vector Mission
     const INDEX_LAYER_MISSION = 0;
     context.commit("setLayerMission", layersWFS[INDEX_LAYER_MISSION]);
-
+    //i=1 Layer Vector Scheme
+    const INDEX_LAYER_SCHEME = 1;
+    context.commit("setLayerScheme", layersWFS[INDEX_LAYER_SCHEME]);
     context.commit("setLayers", [...layersWMS, ...layersWFS]);
   },
   initMap(context) {
@@ -146,7 +149,6 @@ export default {
 
     context.state.map.on("click", (evt) => {
       context.state.overlay.setPosition(undefined);
-
       const coordinate = evt.coordinate;
       const resolution = context.state.map.getView().getResolution();
       const projection = context.state.map.getView().getProjection();
@@ -155,7 +157,9 @@ export default {
         coordinate,
         resolution,
         projection,
-        { INFO_FORMAT: "application/json" }
+        {
+          INFO_FORMAT: "application/json",
+        }
       );
 
       if (url) {
@@ -275,6 +279,15 @@ export default {
         return styles;
       };
     }
+    if (type === "LineString") {
+      const color = context.state.colorDraw;
+      style = new Style({
+        stroke: new Stroke({
+          color: color,
+          width: 2,
+        }),
+      });
+    }
 
     const vector = new VectorLayer({
       source: source,
@@ -305,15 +318,6 @@ export default {
       context.commit("setDraw", draw);
       map.addInteraction(draw);
     }
-
-    draw.on("drawend", () => {
-      setTimeout(function() {
-        context.state.isDrawingScheme = true;
-        const map = context.state.map;
-        const draw = context.state.draw;
-        map.removeInteraction(draw);
-      }, 500);
-    });
   },
   stopDraw(context) {
     const map = context.state.map;
@@ -358,6 +362,25 @@ export default {
   updateMission(context, mission) {
     context.commit("UPDATE_MISSION", mission);
   },
+  updateScheme(context, scheme) {
+    context.commit("UPDATE_SCHEME", scheme);
+  },
+
+  async getSchemes(context) {
+    try {
+      const prefixUrl = process.env.VUE_APP_ROOT_API;
+      const res = await axios.get(prefixUrl + "/schemes");
+      context.commit("setSchemes", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+    //draw Arrow
+    styleFeatureScheme(
+      context.state.layerScheme.getSource(),
+      context.state.schemes
+    );
+  },
+
   startSimulation(context, polyline) {
     var route = new LineString(polyline.coordinates).transform(
       "EPSG:4326",

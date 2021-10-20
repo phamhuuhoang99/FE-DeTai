@@ -2,14 +2,15 @@ import Feature from "ol/Feature";
 import { Icon, Style } from "ol/style";
 import Point from "ol/geom/Point";
 import { Fill, Circle } from "ol/style";
-function createNewFeature(coordinates) {
-  return new Feature({
-    geometry: new Point(coordinates),
-    name: "Mission Edit ",
-  });
-}
+import img from "../assets/marker.png";
 
 export function editFeaturePoint(sourceMissionLayer, missions, missionDetail) {
+  function createNewFeature(coordinates) {
+    return new Feature({
+      geometry: new Point(coordinates),
+      name: "Mission Edit ",
+    });
+  }
   // Delete all Feature
   function addFeatureInLayer(style, coordinates) {
     let feature = createNewFeature(coordinates);
@@ -54,10 +55,10 @@ export function editFeaturePoint(sourceMissionLayer, missions, missionDetail) {
 
     const iconStyle = new Style({
       image: new Icon({
-        anchor: [0.5, 46],
+        anchor: [0.5, 60],
         anchorXUnits: "fraction",
         anchorYUnits: "pixels",
-        src: "https://openlayers.org/en/latest/examples/data/icon.png",
+        src: img,
       }),
     });
     iconFeature.setStyle(iconStyle);

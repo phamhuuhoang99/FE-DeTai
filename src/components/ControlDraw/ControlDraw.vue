@@ -27,7 +27,13 @@
       ></Button>
     </Tooltip>
     <Tooltip content="Vẽ đường" placement="top">
-      <Button class="mg" type="success" icon="md-remove" shape="circle">
+      <Button
+        @click="drawLine"
+        class="mg"
+        type="success"
+        icon="md-remove"
+        shape="circle"
+      >
       </Button>
     </Tooltip>
 
@@ -38,7 +44,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -47,9 +53,28 @@ export default {
   },
   methods: {
     ...mapActions(["startDraw"]),
-    ...mapMutations(["setColorDraw"]),
+    ...mapMutations([
+      "setColorDraw",
+      "setTypeDrawScheme",
+      "setIsDrawingScheme",
+    ]),
     drawArrow() {
       this.startDraw("Arrow");
+      this.setTypeDrawScheme("Arrow");
+      this.endDraw();
+    },
+    drawLine() {
+      this.startDraw("LineString");
+      this.setTypeDrawScheme("LineString");
+      this.endDraw();
+    },
+    endDraw() {
+      this.draw.on("drawend", () => {
+        setTimeout(() => {
+          this.setIsDrawingScheme(true);
+          this.map.removeInteraction(this.draw);
+        }, 500);
+      });
     },
 
     colorChange(data) {
@@ -57,7 +82,7 @@ export default {
     },
   },
   computed: {
-    // ...mapGetters(["colorDraw"]),
+    ...mapGetters(["draw", "map"]),
   },
 };
 </script>

@@ -35,6 +35,7 @@ export default {
     this.initMap();
     this.initEventClickMap();
     this.getMissions();
+    this.getSchemes();
     this.initLoadMap();
   },
   computed: {
@@ -46,6 +47,7 @@ export default {
       "initMap",
       "getMissions",
       "initEventClickMap",
+      "getSchemes",
     ]),
     initLoadMap() {
       this.sourceBaseMap.on("tileloadstart", () => {

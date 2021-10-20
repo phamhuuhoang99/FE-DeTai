@@ -50,49 +50,81 @@
       :data="plan.schemes"
     >
       <template slot-scope="{ index }" slot="note">
-        <Button
-          size="small"
-          v-bind:style="{
-            margiRight: 5 + 'px',
-            background: plan.schemes[index].color_scheme,
-          }"
-          @click="show(index)"
-          icon="md-eye"
-          shape="circle"
-        ></Button>
+        <Row>
+          <Col span="12">
+            <Button
+              size="small"
+              v-bind:style="{
+                margiRight: 5 + 'px',
+                background: plan.schemes[index].color_scheme,
+              }"
+              @click="show(index)"
+              icon="ios-eye"
+              shape="circle"
+            ></Button
+          ></Col>
 
-        <Tooltip content="Mô phỏng" placement="top">
-          <Button
-            :style="{ marginLeft: 5 + 'px' }"
-            size="small"
-            type="primary"
-            shape="circle"
-            icon="md-play"
-            @click="eventStart(index)"
-          ></Button>
-        </Tooltip>
-
-        <Button
-          :style="{ marginLeft: 5 + 'px' }"
-          size="small"
-          type="error"
-          shape="circle"
-          icon="md-trash"
-        ></Button>
+          <Col span="12">
+            <Button
+              :style="{ marginLeft: 5 + 'px' }"
+              size="small"
+              type="primary"
+              shape="circle"
+              icon="md-play"
+              @click="eventStart(index)"
+            ></Button
+          ></Col>
+        </Row>
+        <Row :style="{ marginTop: 5 + 'px' }">
+          <Col span="12">
+            <Button
+              v-if="editIndex !== index"
+              :style="{ marginRight: 5 + 'px' }"
+              size="small"
+              type="warning"
+              shape="circle"
+              icon="ios-create-outline"
+              @click="editScheme(index)"
+            ></Button
+            ><Button
+              v-else
+              :style="{ marginRight: 5 + 'px' }"
+              size="small"
+              type="warning"
+              shape="circle"
+              icon="ios-pause-outline"
+              @click="pauseEditScheme"
+            ></Button>
+          </Col>
+          <Col span="12">
+            <Button
+              :style="{ marginLeft: 5 + 'px' }"
+              size="small"
+              type="error"
+              shape="circle"
+              icon="md-trash"
+            ></Button
+          ></Col>
+        </Row>
       </template>
     </Table>
 
     <ModalAddScheme :planId="plan.id" @addScheme="addSchemeHandler" />
+    <ModalEditScheme :scheme="schemeEdit" />
   </div>
 </template>
 
 <script>
 import { eventBus } from "../../main";
 import ModalAddScheme from "../Scheme/ModalAddScheme";
+import ModalEditScheme from "../Scheme/ModalEditScheme";
 import { mapMutations, mapGetters, mapActions } from "vuex";
+import { modifySnapMap } from "../../common/modifySnapMap";
+import { overlayFeatureEdit } from "../../common/overlayFeatureEdit";
+
 export default {
   props: ["data"],
-  components: { ModalAddScheme },
+  components: { ModalAddScheme, ModalEditScheme },
   data() {
     return {
       isAddScheme: false,
@@ -112,16 +144,27 @@ export default {
         {
           title: "Ghi chú",
           slot: "note",
-
-          width: 120,
+          width: 100,
         },
       ],
       isAddingScheme: false,
       plan: Object,
+      editIndex: null,
+      modify: null,
+      snap: null,
+      schemeEdit: {
+        name: "",
+        time_start: "",
+        planId: "",
+        note: "",
+        geom: "",
+        color_scheme: "",
+        type_draw: "",
+      },
     };
   },
   computed: {
-    ...mapGetters(["overlay"]),
+    ...mapGetters(["overlay", "layerScheme", "map", "layerOverlayEdit"]),
   },
   async created() {
     const res = await this.callApi("get", "/plans/" + this.data.id);
@@ -139,8 +182,8 @@ export default {
     this.setIsDrawingScheme(false);
   },
   methods: {
-    ...mapMutations(["setIsDrawingScheme"]),
-    ...mapActions(["startSimulation"]),
+    ...mapMutations(["setIsDrawingScheme", "setIsEditingScheme"]),
+    ...mapActions(["startSimulation", "clearSourceDraw", "stopDraw"]),
     backToMission() {
       this.$emit("showMission", true);
     },
@@ -150,6 +193,8 @@ export default {
     },
     closeAddScheme() {
       this.isAddScheme = false;
+      this.clearSourceDraw();
+      this.stopDraw();
       eventBus.$emit("hideControlDraw", this.isAddScheme);
     },
     addSchemeHandler(data) {
@@ -161,7 +206,6 @@ export default {
       const geom = this.plan.schemes[index].geom.coordinates;
 
       const coordinate = geom[geom.length - 2];
-      console.log(coordinate);
 
       closer.onclick = () => {
         this.overlay.setPosition(undefined);
@@ -184,7 +228,29 @@ export default {
     eventStart(index) {
       console.log(index);
       this.startSimulation(this.plan.schemes[index].geom);
-      // this.startSimulation();
+    },
+    editScheme(index) {
+      this.closeAddScheme();
+
+      this.editIndex = index;
+      this.schemeEdit = this.plan.schemes[index];
+      this.modify = modifySnapMap(this.layerOverlayEdit).modify;
+      this.snap = modifySnapMap(this.layerOverlayEdit).snap;
+      try {
+        overlayFeatureEdit(
+          this.map,
+          this.plan.schemes[index].geom.coordinates,
+          this.layerOverlayEdit
+        );
+      } catch (exp) {
+        console.log(exp);
+      }
+      this.map.addInteraction(this.snap);
+      this.map.addInteraction(this.modify);
+    },
+    pauseEditScheme() {
+      this.editIndex = null;
+      this.setIsEditingScheme(true);
     },
   },
 };

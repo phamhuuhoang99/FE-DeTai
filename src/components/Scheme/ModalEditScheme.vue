@@ -1,16 +1,11 @@
 <template>
   <Modal
-    v-model="isDrawingScheme"
-    title="Thêm mới phương án"
+    v-model="isEditingScheme"
+    title="Sửa phương án"
     :closable="false"
     :mask-closable="false"
   >
-    <Form
-      ref="formAddScheme"
-      label-position="left"
-      :model="scheme"
-      :label-width="100"
-    >
+    <Form label-position="left" :model="scheme" :label-width="100">
       <FormItem label="Tên ">
         <Input
           type="text"
@@ -38,6 +33,9 @@
           style="width: 200px"
         ></DatePicker>
       </FormItem>
+      <FormItem label="Chọn màu">
+        <ColorPicker v-model="scheme.color_scheme" />
+      </FormItem>
 
       <FormItem label="Ghi chú" prop="note">
         <Input
@@ -53,7 +51,7 @@
         Hủy
       </Button>
       <Button type="primary" @click="save">
-        Thêm phương án
+        Sửa phương án
       </Button>
     </div>
   </Modal>
@@ -64,12 +62,12 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import GeoJSON from "ol/format/GeoJSON";
 import { styleFeatureScheme } from "../../common/styleFeatureScheme";
 export default {
-  props: ["planId"],
+  props: ["scheme"],
   data() {
     return {
-      scheme: {
-        ...this.defaultScheme,
-      },
+      // scheme: {
+      //   ...this.defaultScheme,
+      // },
       cityList: [
         {
           value: "New York",
@@ -85,58 +83,52 @@ export default {
       },
     };
   },
-  created() {
-    this.setIsDrawingScheme(false);
-  },
+  // created() {
+  //   this.setIsDrawingScheme(false);
+  // },
   computed: {
     ...mapGetters([
-      "isDrawingScheme",
-      "draw",
       "colorDraw",
       "map",
       "layerScheme",
       "schemes",
       "typeDrawScheme",
+      "isEditingScheme",
+      "layerOverlayEdit",
     ]),
   },
   methods: {
-    ...mapMutations(["setIsDrawingScheme", "setSchemes"]),
-    ...mapActions(["clearSourceDraw"]),
+    ...mapMutations(["setIsDrawingScheme", "setIsEditingScheme"]),
+    ...mapActions(["clearSourceDraw", "updateScheme"]),
     cancel() {
-      this.setIsDrawingScheme(false);
-      this.clearSourceDraw();
+      this.setIsEditingScheme(false);
+      this.layerOverlayEdit.getSource().clear();
+      this.map.removeLayer(this.layerOverlayEdit);
     },
     async save() {
-      const source = this.draw.source_;
-      var geoJSONformat = new GeoJSON();
-      var featureGeojson = geoJSONformat.writeFeaturesObject(
-        source.getFeatures()
+      const geoJSONformat = new GeoJSON();
+      const featureGeojson = geoJSONformat.writeFeaturesObject(
+        this.layerOverlayEdit.getSource().getFeatures()
       );
       const geojsonFeatureArray = featureGeojson.features;
       const geom = geojsonFeatureArray[0].geometry;
-      this.scheme.geom = geom;
-      if (!this.typeDrawScheme) return this.e("Error");
 
-      const res = await this.callApi("post", "/schemes/create", {
-        scheme: {
-          ...this.scheme,
-          color_scheme: this.colorDraw,
-          type_draw: this.typeDrawScheme,
-        },
-        planId: this.planId,
-      });
+      this.scheme.geom = geom;
+      const id = this.scheme.id;
+
+      const res = await this.callApi("put", "/schemes/" + id, this.scheme);
+
       if (res.status === 200) {
-        this.s("Thêm thành công");
-        // this.onShow = false;
-        this.$emit("addScheme", res.data);
-        this.scheme = { ...this.defaultScheme };
-        this.setIsDrawingScheme(false);
+        this.s("Sửa thành công");
+        this.setIsEditingScheme(false);
+        this.updateScheme(this.scheme);
 
         this.layerScheme.getSource().refresh();
-        //
-        this.setSchemes([...this.schemes, res.data]);
-        console.log(this.schemes);
+
         styleFeatureScheme(this.layerScheme.getSource(), this.schemes);
+
+        this.layerOverlayEdit.getSource().clear();
+        this.map.removeLayer(this.layerOverlayEdit);
       } else {
         if (res.status === 500) {
           this.e(res.data.message);

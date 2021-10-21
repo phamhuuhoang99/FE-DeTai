@@ -135,7 +135,6 @@ export default {
         this.layerScheme.getSource().refresh();
         //
         this.setSchemes([...this.schemes, res.data]);
-        console.log(this.schemes);
         styleFeatureScheme(this.layerScheme.getSource(), this.schemes);
       } else {
         if (res.status === 500) {

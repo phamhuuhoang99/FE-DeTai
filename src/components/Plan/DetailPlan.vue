@@ -240,7 +240,8 @@ export default {
         overlayFeatureEdit(
           this.map,
           this.plan.schemes[index].geom.coordinates,
-          this.layerOverlayEdit
+          this.layerOverlayEdit,
+          this.plan.schemes[index].type_draw
         );
       } catch (exp) {
         console.log(exp);

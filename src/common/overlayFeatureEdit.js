@@ -1,10 +1,8 @@
 import Feature from "ol/Feature";
-// import Point from "ol/geom/Point";
 import LineString from "ol/geom/LineString";
-// import { Vector as VectorSource } from "ol/source";
-// import { Vector as VectorLayer } from "ol/layer";
+import Polygon from "ol/geom/Polygon";
 import { Fill, Stroke, Style, Circle } from "ol/style";
-export function overlayFeatureEdit(map, coordinates, layerOverlay) {
+export function overlayFeatureEdit(map, coordinates, layerOverlay, type) {
   if (layerOverlay) {
     layerOverlay.getSource().clear();
     map.removeLayer(layerOverlay);
@@ -24,10 +22,21 @@ export function overlayFeatureEdit(map, coordinates, layerOverlay) {
       }),
     }),
   });
-
-  const feature = new Feature({
-    geometry: new LineString(coordinates),
-  });
+  let feature;
+  switch (type) {
+    case "LineString": {
+      feature = new Feature({
+        geometry: new LineString(coordinates),
+      });
+      break;
+    }
+    case "Polygon": {
+      feature = new Feature({
+        geometry: new Polygon(coordinates),
+      });
+      break;
+    }
+  }
 
   feature.setStyle(style);
 

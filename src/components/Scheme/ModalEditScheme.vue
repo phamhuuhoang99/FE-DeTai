@@ -83,9 +83,6 @@ export default {
       },
     };
   },
-  // created() {
-  //   this.setIsDrawingScheme(false);
-  // },
   computed: {
     ...mapGetters([
       "colorDraw",

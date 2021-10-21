@@ -4,7 +4,6 @@ import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
 import { Vector as VectorSource } from "ol/source";
 import { Vector as VectorLayer } from "ol/layer";
-import Draw from "ol/interaction/Draw";
 import "ol/ol.css";
 import mapConfig from "../../src/mapConfig";
 import {
@@ -25,7 +24,6 @@ import Feature from "ol/Feature";
 import { flash } from "../animation/animation";
 import { getVectorContext } from "ol/render";
 import axios from "axios";
-import * as turf from "@turf/turf";
 import GeoJSON from "ol/format/GeoJSON";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { styleFeatureScheme } from "../common/styleFeatureScheme";
@@ -79,19 +77,9 @@ export default {
           },
           strategy: bboxStrategy,
         });
-        var fill = new Fill({
-          color: "rgba(255,0,0,0.9)",
-        });
 
         let layerWFS = new VectorLayer({
           source: vectorSource,
-          style: new Style({
-            image: new Circle({
-              fill: fill,
-              radius: 5,
-            }),
-            fill: fill,
-          }),
         });
         layersWFS.push(layerWFS);
       }
@@ -99,6 +87,21 @@ export default {
     //i=0 Layer Vector Mission
     const INDEX_LAYER_MISSION = 0;
     context.commit("setLayerMission", layersWFS[INDEX_LAYER_MISSION]);
+    //tam thoi
+    context.state.layerMission.setStyle(
+      new Style({
+        fill: new Fill({
+          color: "rgba(0, 0, 255, 0.1)",
+        }),
+        image: new Circle({
+          radius: 5,
+          fill: new Fill({
+            color: "red",
+          }),
+        }),
+      })
+    );
+
     //i=1 Layer Vector Scheme
     const INDEX_LAYER_SCHEME = 1;
     context.commit("setLayerScheme", layersWFS[INDEX_LAYER_SCHEME]);
@@ -185,139 +188,6 @@ export default {
           });
       }
     });
-  },
-  startDraw(context, type = "None") {
-    const geometryFunction = function(coordinates, geometry) {
-      if (!geometry) {
-        geometry = new LineString([], "XY");
-      }
-
-      var line = {
-        type: "Feature",
-        properties: {},
-        geometry: {
-          type: "LineString",
-          coordinates: coordinates,
-        },
-      };
-      var curved = turf.bezier(line);
-      geometry.setCoordinates(curved["geometry"]["coordinates"]);
-      return geometry;
-    };
-    const source = new VectorSource({ wrapX: false });
-    let style;
-
-    if (type === "Point") {
-      style = new Style({
-        fill: new Fill({
-          color: "#FF0000",
-        }),
-        stroke: new Stroke({
-          color: "#FF0000",
-          width: 2,
-        }),
-        image: new CircleStyle({
-          radius: 5,
-          fill: new Fill({
-            color: "#FF0000",
-          }),
-        }),
-      });
-    }
-    if (type === "Arrow") {
-      const color = context.state.colorDraw;
-      style = function(feature) {
-        const geometry = feature.getGeometry();
-        let styles = [
-          new Style({
-            stroke: new Stroke({
-              color: color,
-              width: 2,
-            }),
-          }),
-        ];
-        geometry.forEachSegment((start, end) => {
-          const dx = end[0] - start[0];
-          const dy = end[1] - start[1];
-          const rotation = Math.atan2(dy, dx);
-          // arrows
-          // styles.push(
-          //   new Style({
-          //     geometry: new Point(end),
-          //     image: new Icon({
-          //       src: "./images/arrow.png",
-          //       anchor: [0.75, 0.5],
-          //       rotateWithView: true,
-          //       rotation: -rotation,
-          //       scale: 1.25,
-          //       color: color,
-          //     }),
-          //   })
-          // );
-          styles = new Array(
-            new Style({
-              geometry: new Point(end),
-              image: new Icon({
-                src: "./images/arrow.png",
-                anchor: [0.75, 0.5],
-                rotateWithView: true,
-                rotation: -rotation,
-                scale: 1.25,
-                color: color,
-              }),
-            })
-          );
-        });
-        styles.push(
-          new Style({
-            stroke: new Stroke({
-              color: color,
-              width: 2,
-            }),
-          })
-        );
-        return styles;
-      };
-    }
-    if (type === "LineString") {
-      const color = context.state.colorDraw;
-      style = new Style({
-        stroke: new Stroke({
-          color: color,
-          width: 2,
-        }),
-      });
-    }
-
-    const vector = new VectorLayer({
-      source: source,
-      style: style,
-    });
-
-    const map = context.state.map;
-
-    map.addLayer(vector);
-
-    let draw; // global so we can remove it later
-
-    if (type !== "None") {
-      if (type === "Arrow") {
-        type = "LineString";
-        draw = new Draw({
-          source: source,
-          type: type,
-          geometryFunction: geometryFunction,
-        });
-      } else {
-        draw = new Draw({
-          source: source,
-          type: type,
-        });
-      }
-
-      context.commit("setDraw", draw);
-      map.addInteraction(draw);
-    }
   },
   stopDraw(context) {
     const map = context.state.map;

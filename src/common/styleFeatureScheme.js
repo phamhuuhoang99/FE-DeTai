@@ -1,9 +1,11 @@
 import Feature from "ol/Feature";
 import { Style } from "ol/style";
 import Point from "ol/geom/Point";
-import { Icon, Stroke } from "ol/style";
+import { Icon, Stroke, Fill } from "ol/style";
 import LineString from "ol/geom/LineString";
 // import imgArrow from "../assets/arrow.png";
+import Polygon from "ol/geom/Polygon";
+// import { asArray } from "ol/color";
 
 export function styleFeatureScheme(sourceSchemesLayout, schemes) {
   function createNewFeature(coordinates, type) {
@@ -11,10 +13,15 @@ export function styleFeatureScheme(sourceSchemesLayout, schemes) {
       return new Feature({
         geometry: new LineString(coordinates),
       });
-    else if (type === "Point")
+    else if (type === "Point") {
       return new Feature({
         geometry: new Point(coordinates),
       });
+    } else if (type === "Polygon") {
+      return new Feature({
+        geometry: new Polygon(coordinates),
+      });
+    }
   }
 
   function addFeatureInLayer(styles, coordinates, type) {
@@ -48,27 +55,49 @@ export function styleFeatureScheme(sourceSchemesLayout, schemes) {
     return styleArrow;
   }
 
+  sourceSchemesLayout.forEachFeature(function(feature) {
+    sourceSchemesLayout.removeFeature(feature);
+  });
+
   for (let scheme of schemes) {
     const coordinates = scheme.geom.coordinates;
     const coordinateEndLine = coordinates[coordinates.length - 1];
     const coordinatePrevEndLine = coordinates[coordinates.length - 2];
 
-    const styleArrowLine = styleArrow(
-      coordinatePrevEndLine,
-      coordinateEndLine,
-      scheme.color_scheme
-    );
+    switch (scheme.type_draw) {
+      case "Arrow": {
+        const styleArrowLine = styleArrow(
+          coordinatePrevEndLine,
+          coordinateEndLine,
+          scheme.color_scheme
+        );
 
-    let styleLine = new Style({
-      stroke: new Stroke({
-        color: scheme.color_scheme,
-        width: 2,
-      }),
-    });
+        addFeatureInLayer(styleArrowLine, coordinateEndLine, "Point");
+        break;
+      }
+      case "LineString": {
+        let styleLine = new Style({
+          stroke: new Stroke({
+            color: scheme.color_scheme,
+            width: 2,
+          }),
+        });
+        addFeatureInLayer(styleLine, coordinates, "LineString");
+        break;
+      }
+      case "Polygon": {
+        const color = scheme.color_scheme;
+        console.log(color);
 
-    addFeatureInLayer(styleLine, coordinates, "LineString");
-    if (scheme.type_draw === "Arrow") {
-      addFeatureInLayer(styleArrowLine, coordinateEndLine, "Point");
+        let stylePolygon = new Style({
+          fill: new Fill({
+            color: color,
+          }),
+        });
+
+        addFeatureInLayer(stylePolygon, coordinates, "Polygon");
+        break;
+      }
     }
   }
 }

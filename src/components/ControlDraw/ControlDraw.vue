@@ -38,13 +38,15 @@
     </Tooltip>
 
     <Tooltip content="Vẽ đa giác" placement="top">
-      <Button type="success" icon="md-crop" shape="circle"> </Button>
+      <Button @click="drawPolygon" type="success" icon="md-crop" shape="circle">
+      </Button>
     </Tooltip>
   </div>
 </template>
 
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
+import { startDrawTest } from "../../common/draw";
 export default {
   data() {
     return {
@@ -57,15 +59,24 @@ export default {
       "setColorDraw",
       "setTypeDrawScheme",
       "setIsDrawingScheme",
+      "setDraw",
     ]),
     drawArrow() {
-      this.startDraw("Arrow");
+      const draw = startDrawTest(this.map, this.colorDraw, "Arrow");
+      this.setDraw(draw);
       this.setTypeDrawScheme("Arrow");
       this.endDraw();
     },
     drawLine() {
-      this.startDraw("LineString");
+      const draw = startDrawTest(this.map, this.colorDraw, "LineString");
+      this.setDraw(draw);
       this.setTypeDrawScheme("LineString");
+      this.endDraw();
+    },
+    drawPolygon() {
+      const draw = startDrawTest(this.map, this.colorDraw, "Polygon");
+      this.setDraw(draw);
+      this.setTypeDrawScheme("Polygon");
       this.endDraw();
     },
     endDraw() {
@@ -78,6 +89,7 @@ export default {
     },
 
     colorChange(data) {
+      this.colorDraw = data;
       this.setColorDraw(data);
     },
   },

@@ -1,13 +1,10 @@
 <template>
-  <Layouts>
-    <MapContainer />
-  </Layouts>
+  <MapContainer />
 </template>
 <script>
-import Layouts from "./Layouts/Layouts.vue";
 import MapContainer from "./Map/MapContainer.vue";
 export default {
-  components: { Layouts, MapContainer },
+  components: { MapContainer },
 };
 </script>
 <style scoped></style>

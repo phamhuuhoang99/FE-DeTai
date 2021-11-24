@@ -3,7 +3,7 @@ import App from "./App.vue";
 import ViewUI from "view-design";
 import locale from "view-design/dist/locale/en-US";
 import Vuex from "vuex";
-import router from "./router";
+import { router } from "./router";
 import "view-design/dist/styles/iview.css";
 import common from "./common";
 import storeConfig from "./store/index";
@@ -21,7 +21,7 @@ const store = new Vuex.Store(storeConfig);
 Vue.config.productionTip = false;
 
 new Vue({
-  render: (h) => h(App),
-  router,
-  store,
+    render: (h) => h(App),
+    router,
+    store,
 }).$mount("#app");

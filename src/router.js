@@ -1,10 +1,11 @@
 import Vue from "vue";
 import Router from "vue-router";
+// import store from "./store/state";
 Vue.use(Router);
 
 import LayoutsAdmin from "./components/Admin/components/Layouts/LayoutsAdmin.vue";
 import DashBoard from "./components/Admin/components/Dashboard/Dashboard.vue";
-import ViewMap from "./components/ViewMap";
+import Layouts from "./components/Layouts/Layouts.vue";
 import CreateUser from "./components/Admin/components/User/User.vue";
 import KieuThamHoa from "./components/Admin/components/ThamHoa/KieuThamHoa.vue";
 import Login from "./components/Login/Login.vue";
@@ -55,8 +56,8 @@ const routes = [
   },
   {
     path: "/",
-    component: ViewMap,
-    name: "user",
+    component: Layouts,
+    name: "layout",
   },
   {
     path: "/login",
@@ -65,7 +66,22 @@ const routes = [
   },
 ];
 
-export default new Router({
+export const router = new Router({
   mode: "history",
   routes,
 });
+
+// router.beforeEach((to, from, next) => {
+//   // redirect to login page if not logged in and trying to access a restricted page
+//   const publicPages = ["/login", "/register"];
+//   const authRequired = !publicPages.includes(to.path);
+//   const loggedIn = store.user;
+
+//   // if (!authRequired && loggedIn) return next('/');
+
+//   if (authRequired && !loggedIn) {
+//     return next("/login");
+//   }
+
+//   next();
+// });

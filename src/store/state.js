@@ -34,4 +34,7 @@ export default {
   /*---------------*/
   missions: [],
   schemes: [],
+  // ----------------
+  user: {},
+  permissions: [],
 };

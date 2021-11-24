@@ -1,38 +1,37 @@
 <template>
-  <div>
-    <div class="container">
-      <div
-        class="_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20 col-md-4 mx-auto"
-      >
-        <div class="login-header text-center">
-          <h1>Đăng Nhập</h1>
-        </div>
-        <div class="space mt-3">
-          <Input
-            type="email"
-            size="large"
-            v-model="data.email"
-            placeholder="Email"
-          />
-        </div>
-        <div class="space" style="margin-top:5px">
-          <Input
-            type="password"
-            size="large"
-            v-model="data.password"
-            placeholder="*********"
-          />
-        </div>
-        <div class="login-footer text-center mt-3">
-          <Button
-            type="primary"
-            :disabled="isLogging"
-            :loading="isLogging"
-            size="large"
-          >
-            {{ this.isLogging ? "Đang đăng nhập..." : "Đăng Nhập" }}
-          </Button>
-        </div>
+  <div class="container">
+    <div
+      class=" main _box_shadow _border_radious _mar_b30 _p20 col-md-4 mx-auto"
+    >
+      <div class="login-header text-center">
+        <h1>Đăng Nhập</h1>
+      </div>
+      <div class="space mt-3">
+        <Input
+          type="email"
+          size="large"
+          v-model="data.username"
+          placeholder="Tên đăng nhập"
+        />
+      </div>
+      <div class="space" style="margin-top:5px">
+        <Input
+          type="password"
+          size="large"
+          v-model="data.password"
+          placeholder="*********"
+        />
+      </div>
+      <div class="login-footer text-center mt-3">
+        <Button
+          type="primary"
+          :disabled="isLogging"
+          :loading="isLogging"
+          size="large"
+          @click="onLogin"
+        >
+          {{ this.isLogging ? "Đang đăng nhập..." : "Đăng Nhập" }}
+        </Button>
       </div>
     </div>
   </div>
@@ -42,55 +41,40 @@ export default {
   data() {
     return {
       data: {
-        email: "",
+        username: "",
         password: "",
       },
       isLogging: false,
     };
   },
   methods: {
-    //     async login() {
-    //         if (this.data.email.trim() == "")
-    //             return this.e("Email is required");
-    //         if (this.data.password.trim() == "")
-    //             return this.e("Password is required");
-    //         if (this.data.password.trim().length < 6)
-    //             return this.e("Incorrect Login Details");
-    //         this.isLogging = true;
-    //         const res = await this.callApi(
-    //             "post",
-    //             "app/admin_login",
-    //             this.data
-    //         );
-    //         if (res.status === 200) {
-    //             this.s(res.data.msg);
-    //             window.location = "/";
-    //         } else {
-    //             if (res.status === 401) {
-    //                 this.i(res.data.msg);
-    //             } else if (res.status === 422) {
-    //                 for (let i in res.data.errors) {
-    //                     this.e(res.data.errors[i]);
-    //                     console.log(res.data.errors[i][0]);
-    //                 }
-    //             } else {
-    //                 this.swr();
-    //             }
-    //         }
-    //         this.isLogging = false;
-    //     }
+    async onLogin() {
+      if (this.data.username.trim() == "")
+        return this.e("Yêu cầu nhập tên đăng nhập");
+      if (this.data.password.trim() == "")
+        return this.e("Yêu cầu nhập mật khẩu");
+      this.isLogging = true;
+
+      const res = await this.callApi("post", "/users/signin", this.data);
+      if (res.status === 200) {
+        localStorage.setItem("token", res.headers["authorization"]);
+
+        //set state user;
+
+        this.s("Đăng nhập thành công");
+        this.$router.push("/");
+      } else {
+        this.e(res.data);
+      }
+
+      this.isLogging = false;
+    },
   },
 };
 </script>
 <style scoped>
-._1adminOverveiw_table_recent {
-  margin-top: 220px;
-}
-
 ._box_shadow {
   background: #fff;
-  /*box-shadow: 0px 2px 28px 0px rgba(48, 48, 48, 0.1);
-      box-shadow: 0px 2px 18px 0px rgba(186, 212, 247, 0.43);*/
   -webkit-box-shadow: 0 10px 20px rgba(47, 91, 231, 0.1);
   box-shadow: 0 10px 20px rgba(47, 91, 231, 0.1);
 }
@@ -104,9 +88,7 @@ export default {
   padding: 18px 20px 25px;
 }
 .col-md-4 {
-  -ms-flex: 0 0 33.333333%;
-  flex: 0 0 33.333333%;
-  max-width: 33.333333%;
+  max-width: 25%;
 }
 
 .col-md-4 {
@@ -123,6 +105,10 @@ export default {
 
 .container {
   min-width: 992px !important;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .text-center {
   text-align: center !important;

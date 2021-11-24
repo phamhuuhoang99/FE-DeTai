@@ -8,7 +8,7 @@
         <DetailPlan @showMission="showListMission" v-else :data="plan" />
       </Sider>
       <Layout>
-        <slot></slot>
+        <ViewMap />
       </Layout>
       <!-- <SilderBarRight /> -->
     </Layout>
@@ -19,9 +19,10 @@
 import Mission from "../Missions/Mission.vue";
 import SilderBarLeft from "./SilderBarLeft.vue";
 import DetailPlan from "../Plan/DetailPlan.vue";
+import ViewMap from "../ViewMap.vue";
 import { eventBus } from "../../main";
 export default {
-  components: { Mission, SilderBarLeft, DetailPlan },
+  components: { Mission, SilderBarLeft, DetailPlan, ViewMap },
   data() {
     return {
       showDetailPlan: false,

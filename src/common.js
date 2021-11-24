@@ -1,6 +1,9 @@
 const axios = require("axios");
 
-const prefixUrl = process.env.VUE_APP_ROOT_API;
+axios.defaults.baseURL = process.env.VUE_APP_ROOT_API;
+axios.defaults.headers.common["Authorization"] =
+  "Bearer " + localStorage.getItem("token");
+
 export default {
   data() {
     return {};
@@ -10,7 +13,7 @@ export default {
       try {
         return await axios({
           method: method,
-          url: prefixUrl + url,
+          url: url,
           data: dataObj,
         });
       } catch (e) {

@@ -8,7 +8,7 @@ import { Vector as VectorSource } from "ol/source";
 import { Vector as VectorLayer } from "ol/layer";
 import Draw from "ol/interaction/Draw";
 
-function startDrawTest(map, colorDraw, type = "None") {
+function startDraw(map, colorDraw = "#FF0000", type = "None") {
   const geometryFunction = function(coordinates, geometry) {
     if (!geometry) {
       geometry = new LineString([], "XY");
@@ -149,4 +149,4 @@ function startDrawTest(map, colorDraw, type = "None") {
   }
 }
 
-export { startDrawTest };
+export { startDraw };

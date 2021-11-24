@@ -53,6 +53,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import { flash } from "../../animation/animation";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
+// import GML2 from "ol/format/GML2";
 export default {
   props: ["show"],
   data() {

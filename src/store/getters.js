@@ -16,6 +16,6 @@ export default {
   schemes: (state) => state.schemes,
   layerScheme: (state) => state.layerScheme,
   typeDrawScheme: (state) => state.typeDrawScheme,
-  layerOverlayEdit: (state) => state.layerOverlayEdit,
   isEditingScheme: (state) => state.isEditingScheme,
+  layerOverlayEdit: (state) => state.layerOverlayEdit,
 };

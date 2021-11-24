@@ -10,6 +10,20 @@ export default {
   data() {
     return {};
   },
+  async created() {
+    const token = localStorage.getItem("token");
+    if (!token && this.$route.name != "login") {
+      this.$router.push("/login");
+    }
+  },
+  async mounted() {
+    const res = await this.callApi("get", "/users/user");
+    if (res.status !== 200) {
+      //clear user from state
+      //clear Token from header
+      // back to login
+    }
+  },
 };
 </script>
 
@@ -19,7 +33,6 @@ body {
   height: 100%;
   margin: 0;
 }
-
 * {
   word-break: break-word !important;
 }

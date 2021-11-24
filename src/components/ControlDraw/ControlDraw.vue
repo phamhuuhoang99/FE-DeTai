@@ -46,7 +46,7 @@
 
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
-import { startDrawTest } from "../../common/draw";
+import { startDraw } from "../../common/draw";
 export default {
   data() {
     return {
@@ -62,19 +62,19 @@ export default {
       "setDraw",
     ]),
     drawArrow() {
-      const draw = startDrawTest(this.map, this.colorDraw, "Arrow");
+      const draw = startDraw(this.map, this.colorDraw, "Arrow");
       this.setDraw(draw);
       this.setTypeDrawScheme("Arrow");
       this.endDraw();
     },
     drawLine() {
-      const draw = startDrawTest(this.map, this.colorDraw, "LineString");
+      const draw = startDraw(this.map, this.colorDraw, "LineString");
       this.setDraw(draw);
       this.setTypeDrawScheme("LineString");
       this.endDraw();
     },
     drawPolygon() {
-      const draw = startDrawTest(this.map, this.colorDraw, "Polygon");
+      const draw = startDraw(this.map, this.colorDraw, "Polygon");
       this.setDraw(draw);
       this.setTypeDrawScheme("Polygon");
       this.endDraw();

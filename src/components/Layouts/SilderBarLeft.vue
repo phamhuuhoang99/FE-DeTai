@@ -28,10 +28,11 @@
   </Menu>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import AddMission from "../Missions/AddMission";
 import GeoJSON from "ol/format/GeoJSON";
 import { eventBus } from "../../main";
+import { startDraw } from "../../common/draw";
 export default {
   components: { AddMission },
   data() {
@@ -43,6 +44,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["map"]),
     menuitemClasses: function() {
       return ["menu-item", this.closable ? "collapsed-menu" : ""];
     },
@@ -54,12 +56,12 @@ export default {
       return featureGeojson.features.length > 0;
     },
   },
-  mounted() {},
   methods: {
-    ...mapActions(["startDraw", "stopDraw"]),
-    ...mapGetters(["map"]),
+    ...mapActions(["stopDraw"]),
+    ...mapMutations(["setDraw"]),
     addMisson() {
-      this.startDraw("Point");
+      const draw = startDraw(this.map, "#FF0000", "Point");
+      this.setDraw(draw);
       this.i("Thêm địa điểm xảy ra thảm họa");
       this.isAddLocation = true;
     },

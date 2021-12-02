@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <Button shape="circle" icon="md-add" @click="onShowModalAdd"
       >Thêm CSVC</Button
     >
@@ -41,7 +41,7 @@
       :materialId="idMaterialDelete"
       @deleteMaterial="deleteMaterialHandler"
     />
-  </fragment>
+  </div>
 </template>
 
 <script>

@@ -44,14 +44,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["map"]),
+    ...mapGetters(["map", "draw"]),
     menuitemClasses: function() {
       return ["menu-item", this.closable ? "collapsed-menu" : ""];
     },
     addingPoint: function() {
       var geoJSONformat = new GeoJSON();
       var featureGeojson = geoJSONformat.writeFeaturesObject(
-        this.$store.state.draw.source_.getFeatures()
+        this.draw.source_.getFeatures()
       );
       return featureGeojson.features.length > 0;
     },

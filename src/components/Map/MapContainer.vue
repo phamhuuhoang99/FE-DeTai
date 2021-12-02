@@ -1,6 +1,33 @@
 <template>
   <div style="position: relative;">
     <ControlDraw v-if="showControlDraw" />
+    <div class="information-user">
+      <Poptip trigger="hover" placement="bottom">
+        <Avatar
+          style="background-color: #2d8cf0"
+          icon="ios-person"
+          size="large"
+        />
+        <div slot="title">
+          <i>{{ user.first_name + " " + user.last_name }}</i>
+        </div>
+
+        <div slot="content">
+          <ul class="user-info-dropdown">
+            <li>
+              <a>
+                Thông tin tài khoản
+              </a>
+            </li>
+            <li>
+              <a @click="logout()">
+                Đăng xuất
+              </a>
+            </li>
+          </ul>
+        </div>
+      </Poptip>
+    </div>
     <div ref="map-root" id="map" style="width: 100%;height:100vh"></div>
     <div id="popup" class="ol-popup">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -39,7 +66,7 @@ export default {
     this.initLoadMap();
   },
   computed: {
-    ...mapGetters(["sourceBaseMap"]),
+    ...mapGetters(["sourceBaseMap", "user"]),
   },
   methods: {
     ...mapActions([
@@ -57,6 +84,12 @@ export default {
       this.sourceBaseMap.on("tileloadend", () => {
         this.$Loading.finish();
       });
+    },
+    logout() {
+      localStorage.clear();
+      this.$router.push("/login");
+
+      //handle Logout from BE
     },
   },
 };
@@ -104,5 +137,15 @@ export default {
 }
 .ol-popup-closer:after {
   content: "✖";
+}
+.information-user {
+  position: absolute;
+  top: 10px;
+  right: 80px;
+  z-index: 999;
+}
+.user-info-dropdown li {
+  border-bottom: 1px solid #e8eaec;
+  padding: 8px;
 }
 </style>

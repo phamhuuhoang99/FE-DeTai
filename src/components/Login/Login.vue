@@ -37,6 +37,7 @@
   </div>
 </template>
 <script>
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -48,6 +49,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["setUser"]),
     async onLogin() {
       if (this.data.username.trim() == "")
         return this.e("Yêu cầu nhập tên đăng nhập");
@@ -58,8 +60,9 @@ export default {
       const res = await this.callApi("post", "/users/signin", this.data);
       if (res.status === 200) {
         localStorage.setItem("token", res.headers["authorization"]);
-
         //set state user;
+        const userLogin = res.data.user;
+        this.setUser(userLogin);
 
         this.s("Đăng nhập thành công");
         this.$router.push("/");

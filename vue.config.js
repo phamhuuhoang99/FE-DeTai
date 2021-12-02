@@ -5,4 +5,7 @@ module.exports = {
     // public: "0.0.0.0:8080",
   },
   publicPath: "/",
+  configureWebpack: {
+    devtool: "source-map",
+  },
 };

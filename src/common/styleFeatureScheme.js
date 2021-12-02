@@ -55,9 +55,7 @@ export function styleFeatureScheme(sourceSchemesLayout, schemes) {
     return styleArrow;
   }
 
-  sourceSchemesLayout.forEachFeature(function(feature) {
-    sourceSchemesLayout.removeFeature(feature);
-  });
+  sourceSchemesLayout.clear();
 
   for (let scheme of schemes) {
     const coordinates = scheme.geom.coordinates;
@@ -71,8 +69,15 @@ export function styleFeatureScheme(sourceSchemesLayout, schemes) {
           coordinateEndLine,
           scheme.color_scheme
         );
+        const styleBodyArrow = new Style({
+          stroke: new Stroke({
+            color: scheme.color_scheme,
+            width: 2,
+          }),
+        });
 
         addFeatureInLayer(styleArrowLine, coordinateEndLine, "Point");
+        addFeatureInLayer(styleBodyArrow, coordinates, "LineString");
         break;
       }
       case "LineString": {
@@ -87,8 +92,6 @@ export function styleFeatureScheme(sourceSchemesLayout, schemes) {
       }
       case "Polygon": {
         const color = scheme.color_scheme;
-        console.log(color);
-
         let stylePolygon = new Style({
           fill: new Fill({
             color: color,

@@ -1,13 +1,23 @@
-import state from "./state";
-import getters from "./getters";
-import actions from "./actions";
-import mutations from "./mutations";
+import Vue from "vue";
+import Vuex from "vuex";
 
-const storeConfig = {
-  state,
-  getters,
-  actions,
-  mutations,
+// Import modules
+import auth from "./modules/auth";
+import map from "./modules/map";
+import mission from "./modules/mission";
+import scheme from "./modules/scheme";
+
+Vue.use(Vuex);
+
+const storeData = {
+  modules: {
+    auth,
+    map,
+    mission,
+    scheme,
+  },
 };
 
-export default storeConfig;
+const store = new Vuex.Store(storeData);
+
+export default store;

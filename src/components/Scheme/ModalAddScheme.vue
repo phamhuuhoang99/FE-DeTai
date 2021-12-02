@@ -131,8 +131,7 @@ export default {
         this.$emit("addScheme", res.data);
         this.scheme = { ...this.defaultScheme };
         this.setIsDrawingScheme(false);
-
-        this.layerScheme.getSource().refresh();
+        this.clearSourceDraw();
         //
         this.setSchemes([...this.schemes, res.data]);
         styleFeatureScheme(this.layerScheme.getSource(), this.schemes);

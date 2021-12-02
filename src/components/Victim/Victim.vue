@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <Button @click="onShowModalAdd" shape="circle" icon="md-add"
       >Thêm đối tượng</Button
     >
@@ -59,7 +59,7 @@
       :hide="hideModalDelete"
       @deleteVictim="deleteVictimHandler"
     />
-  </fragment>
+  </div>
 </template>
 
 <script>

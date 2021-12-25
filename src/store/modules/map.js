@@ -176,7 +176,6 @@ const mapModule = {
             .then((response) => response.json())
             .then((data) => {
               if (data.features.length == 0) return;
-              console.log(data);
               try {
                 content.innerHTML =
                   "<b>Tên Nhiệm Vụ</b>: " +

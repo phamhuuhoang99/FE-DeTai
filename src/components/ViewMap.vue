@@ -3,6 +3,7 @@
 </template>
 <script>
 import MapContainer from "./Map/MapContainer.vue";
+
 export default {
   components: { MapContainer },
 };

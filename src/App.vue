@@ -20,6 +20,7 @@ export default {
       this.$router.push("/login");
     }
   },
+
   async mounted() {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -32,7 +33,7 @@ export default {
       localStorage.clear();
       // back to login
       this.$router.push("/login");
-    } else {
+    } else if (res.status === 200) {
       this.setUser(res.data);
     }
   },

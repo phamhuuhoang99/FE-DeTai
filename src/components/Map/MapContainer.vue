@@ -40,6 +40,8 @@
 import { mapActions, mapGetters } from "vuex";
 import { eventBus } from "../../main";
 import ControlDraw from "../ControlDraw/ControlDraw.vue";
+// import { moveMap } from "../../common/setupSocket";
+import socketioService from "../../services/socketio.service";
 
 export default {
   name: "MapContainer",
@@ -57,6 +59,10 @@ export default {
     eventBus.$on("hideControlDraw", (show) => {
       this.showControlDraw = show;
     });
+    socketioService.setupSocketConnection();
+  },
+  beforeUnmount() {
+    socketioService.disconnect();
   },
   mounted() {
     this.initMap();
@@ -64,9 +70,14 @@ export default {
     this.getMissions();
     this.getSchemes();
     this.initLoadMap();
+
+    this.map.on("moveend", function() {
+      socketioService.moveMap();
+      console.log("move");
+    });
   },
   computed: {
-    ...mapGetters(["sourceBaseMap", "user"]),
+    ...mapGetters(["sourceBaseMap", "user", "map"]),
   },
   methods: {
     ...mapActions([
